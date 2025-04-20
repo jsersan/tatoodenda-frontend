@@ -1,0 +1,89 @@
+<!-- Contenedor principal de la barra de navegación -->
+<nav>
+    <div>
+      <!-- Lista principal del menú -->
+      <ul id="menu">
+        <!-- Elemento de navegación a la página principal -->
+        <li class="menuitem home" [routerLink]="['/']">HOME</li>
+        
+        <!-- Iteración sobre las categorías principales -->
+        <li class="menuitem elem" *ngFor="let category of getMainCategories()">
+          <!-- Nombre de la categoría principal -->
+          <span [attr.data_id]="category.id" class="categoria">
+            {{ category.nombre.toUpperCase() }}
+          </span>
+          
+          <!-- Submenú para las subcategorías (inicialmente oculto, se muestra al hacer hover) -->
+          <ul [id]="'subcat' + category.id" class="subcat">
+            <!-- Iteración sobre las subcategorías de esta categoría principal -->
+            <li 
+              *ngFor="let subcategory of getSubcategories(category.id)" 
+              [attr.data_id]="subcategory.id" 
+              class="menuitem categoria"
+              [routerLink]="['/category', subcategory.id]"
+            >
+              {{ subcategory.nombre.toUpperCase() }}
+            </li>
+          </ul>
+        </li>
+        
+        <!-- Elemento para ver todos los productos -->
+        <li [id]="'fincat'" [attr.data_id]="'todo'" class="menuitem categoria" [routerLink]="['/products']">
+          VER TODO
+        </li>
+        
+        <!-- Campo de búsqueda -->
+        <li id="search" class="menuitem">
+          <!-- Input para introducir el término de búsqueda -->
+          <input 
+            type="text" 
+            id="searchinput" 
+            [(ngModel)]="searchTerm" 
+            (keyup.enter)="search()" 
+          />
+          <!-- Icono de búsqueda que activa la búsqueda al hacer clic -->
+          <img 
+            id="searchicon" 
+            src="assets/images/icons/search.png" 
+            alt="botón de búsqueda" 
+            (click)="search()"
+          >
+        </li>
+        
+        <!-- Bloque condicional para mostrar diferentes opciones según el rol de usuario -->
+        <ng-container *ngIf="isAdmin(); else regularUser">
+          <!-- Opciones de administrador (solo visible si el usuario es admin) -->
+          <li class="menuitem adminoptions" [routerLink]="['/admin']">
+            <img src="assets/images/icons/settings.png" id="imgprofile"/>ADMINISTRAR
+          </li>
+        </ng-container>
+        
+        <!-- Template que se muestra si el usuario NO es admin -->
+        <ng-template #regularUser>
+          <!-- Perfil de usuario (solo visible si hay un usuario logueado) -->
+          <li *ngIf="currentUser" class="menuitem profile" [routerLink]="['/profile']">
+            <img src="assets/images/icons/login.png" id="imgprofile"/>
+            {{ currentUser.username }}
+          </li>
+        </ng-template>
+        
+        <!-- Botón de login/logout que cambia de función según el estado de autenticación -->
+        <li id="login" class="menuitem" (click)="currentUser ? logout() : router.navigate(['/login'])">
+          <!-- Imagen que cambia según el estado (login/logout) -->
+          <img 
+            [src]="currentUser ? 'assets/images/icons/logout.png' : 'assets/images/icons/login.png'" 
+            alt="login/logout"
+          >
+          <p></p>
+        </li>
+        
+        <!-- Enlace al carrito de compras -->
+        <li id="carrito" class="menuitem" [routerLink]="['/cart']">
+          <!-- Icono del carrito -->
+          <img src="assets/images/icons/cart.png" alt="carrito">
+          <!-- Contador de items (solo visible si hay items) -->
+          <p *ngIf="cartItemCount > 0">{{ cartItemCount }}</p>
+        </li>
+      </ul>
+    </div>
+  </nav>

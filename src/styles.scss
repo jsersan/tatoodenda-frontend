@@ -1,0 +1,326 @@
+/* You can add global styles to this file, and also import other style files */
+/* Importar Bootstrap */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+/* Variables globales */
+$primary: #52667a;
+$primary-dark: #3d4d5c;
+$primary-light: #c2cdd6;
+$background: white;
+$default-font: 'Montserrat', sans-serif;
+
+/* Estilos generales */
+body {
+  padding: 0 50px;
+  font-family: $default-font;
+}
+
+/* Estilos de header */
+header {
+  background-image: url('./assets/images/background/background.jpg');
+  margin: -10px -58px -40px;
+  padding: 10px 60px;
+  
+  h1 {
+    font-family: 'Ruthie', cursive;
+    font-size: 7em;
+    font-weight: normal;
+    text-shadow: 0px 0px 30px $primary-light;
+    cursor: pointer;
+  }
+}
+
+/* Mixins de utilidad */
+@mixin borders {
+  border: solid 1px $primary-light;
+  border-radius: 5px;
+  box-shadow: lightgrey 0px 0px 20px;
+}
+
+@mixin button {
+  padding: 10px 20px;
+  font-family: $default-font;
+  background-color: white;
+  @include borders;
+  cursor: pointer;
+}
+
+/* Navegación */
+#menu {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 10px 0 0;
+  box-shadow: $primary 0px 0px 30px;
+  margin: 40px -58px;
+  
+  li {
+    list-style: none;
+    height: 30px;
+    padding: 10px 30px;
+    
+    &.menuitem {
+      cursor: pointer;
+    }
+  }
+}
+
+/* Submenús */
+.subcat {
+  position: absolute;
+  background-color: $background;
+  padding: 5px 20px 10px;
+  margin-left: -20px;
+  border-radius: 10px;
+  box-shadow: $primary 0px 5px 5px -5px;
+  display: none;
+  
+  li {
+    border-top: solid 1px $primary-light;
+    padding: 7px 0 0;
+    min-width: 150px;
+  }
+}
+
+.elem:hover .subcat {
+  display: block;
+}
+
+/* Banner */
+#banner {
+  width: 100%;
+  position: relative;
+  
+  #bannerimg {
+    width: 90%;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .banner_button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    
+    &#bannerback {
+      left: 20px;
+    }
+    
+    &#bannerforward {
+      right: 20px;
+    }
+  }
+}
+
+/* Títulos de sección */
+#titulo {
+  font-family: 'Lovers Quarrel', cursive;
+  font-size: 5em;
+  font-weight: normal;
+  padding-left: 60px;
+  text-transform: lowercase;
+  margin: 20px 55px 0;
+  border-bottom: solid 1px $primary-light;
+}
+
+/* Artículos */
+#articulos {
+  margin: 20px;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-around;
+  
+  .articulo {
+    cursor: pointer;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 10px;
+    padding: 15px;
+    
+    img {
+      width: 150px;
+      margin: 0 auto;
+    }
+    
+    h2 {
+      text-align: center;
+    }
+    
+    h3 {
+      text-align: right;
+      padding: 0 20px;
+      margin: 5px 0;
+    }
+    
+    p {
+      width: 90%;
+      margin: auto;
+      text-align: justify;
+    }
+  }
+}
+
+/* Footer */
+footer {
+  background-color: $primary-dark;
+  color: white;
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 50px;
+  clear: both;
+  position: relative;
+  bottom: -120px;
+  margin: 50px -58px 0 -58px;
+}
+
+/* Formularios */
+form {
+  input, select, textarea {
+    font-family: $default-font;
+    padding: 5px;
+    margin: 5px;
+    @include borders;
+    
+    &.is-invalid {
+      border-color: red;
+    }
+  }
+  
+  button, input[type="submit"], input[type="button"] {
+    @include button;
+  }
+  
+  .invalid-feedback {
+    color: red;
+    font-size: 0.8em;
+    margin-left: 5px;
+  }
+}
+
+/* Paneles modales */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($primary, 0.75);
+  z-index: 1000;
+}
+
+.modal-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 40px;
+  border-radius: 5px;
+  z-index: 1001;
+  max-width: 80%;
+  max-height: 80%;
+  overflow: auto;
+  
+  h1 {
+    font-family: 'Lovers Quarrel', cursive;
+    font-size: 3em;
+    margin: 0 0 20px 0;
+    font-weight: normal;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2em;
+    border: none;
+    background: transparent;
+    color: $primary-dark;
+    cursor: pointer;
+  }
+}
+
+/* Carrito y checkout */
+.vercarrito, .vercheckout {
+  width: 95%;
+  margin: 20px auto;
+  
+  table {
+    width: 100%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    
+    th {
+      background-color: $primary-light;
+    }
+    
+    td {
+      border-top: 1px solid $primary-light;
+    }
+    
+    tfoot td {
+      font-weight: bold;
+    }
+    
+    .eliminar {
+      cursor: pointer;
+      color: red;
+      font-weight: bold;
+    }
+  }
+  
+  button {
+    @include button;
+    display: block;
+    margin: 20px auto;
+  }
+}
+
+/* Admin panel */
+#divadmin {
+  padding: 20px;
+  
+  #titulo {
+    font-size: 4em;
+    margin-bottom: 20px;
+  }
+  
+  .admin-nav {
+    margin-bottom: 30px;
+    
+    ul {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      
+      li {
+        list-style: none;
+        margin-right: 20px;
+        
+        a {
+          color: $primary;
+          text-decoration: none;
+          padding: 10px;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        
+        &.active a {
+          font-weight: bold;
+          border-bottom: 2px solid $primary;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<div id="admincat">
+    <h1>Categorías</h1>
+    
+    <!-- Sección para añadir nueva categoría -->
+    <div>
+      <h2>Añadir categoria</h2>
+      <form [formGroup]="newCategoryForm" (ngSubmit)="addCategory()">
+        <label>Nombre: </label>
+        <input type="text" id="txtnomcat" formControlName="nombre"/>
+        
+        <label>Padre: </label>
+        <select id="selecpadre" formControlName="padre">
+          <option value="" selected disabled hidden></option>
+          <option value="sin">Sin Padre</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.nombre }}
+          </option>
+        </select>
+        
+        <input type="submit" id="btnaniadircat" value="AÑADIR" />
+      </form>
+    </div>
+    
+    <!-- Sección para editar categoría (visible solo cuando se edita) -->
+    <div *ngIf="showEditForm">
+      <h2>Editar categoria</h2>
+      <form [formGroup]="editCategoryForm" (ngSubmit)="updateCategory()">
+        <label>Nombre: </label>
+        <input type="text" formControlName="nombre"/>
+        
+        <label>Padre: </label>
+        <select formControlName="padre">
+          <option value="sin">Sin Padre</option>
+          <option *ngFor="let category of categories" 
+                  [value]="category.id"
+                  [disabled]="category.id === editCategoryForm.get('id')?.value">
+            {{ category.nombre }}
+          </option>
+        </select>
+        
+        <input type="submit" value="GUARDAR" />
+        <input type="button" value="CANCELAR" (click)="cancelEdit()" />
+      </form>
+    </div>
+    
+    <!-- Sección para listar y administrar categorías existentes -->
+    <div>
+      <h2>Administrar categorias</h2>
+      <table id="editcat">
+        <tr>
+          <th>Nombre</th>
+          <th>Padre</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let category of categories" [id]="'cat' + category.id">
+          <td class="catnom">{{ category.nombre }}</td>
+          <td class="catpadre" [attr.data-id]="category.padre">
+            {{ getParentCategoryName(category.padre) }}
+          </td>
+          <td>
+            <input [attr.data-id]="category.id" type="button" class="editarcat" value="EDITAR" 
+                  (click)="editCategory(category)"/>
+          </td>
+          <td>
+            <input [attr.data-id]="category.id" type="button" class="eliminarcat" value="ELIMINAR" 
+                  (click)="deleteCategory(category.id)"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>

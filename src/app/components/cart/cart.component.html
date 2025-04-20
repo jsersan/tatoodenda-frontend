@@ -1,0 +1,50 @@
+<!-- Vista para carrito vacío -->
+<div *ngIf="cartItems.length === 0" class="empty-cart">
+    <h2>Tu carrito está vacío</h2>
+    <p>Añade algunos productos para continuar con la compra</p>
+    <button class="btn btn-primary" routerLink="/">Explorar productos</button>
+  </div>
+  
+  <!-- Vista para carrito con productos -->
+  <div *ngIf="cartItems.length > 0" class="vercarrito">
+    <table>
+      <thead>
+        <tr>
+          <th>Artículo</th>
+          <th>Color</th>
+          <th>Cantidad</th>
+          <th>Precio(u)</th>
+          <th><span>Precio (total)</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Iteración sobre cada item del carrito -->
+        <tr *ngFor="let item of cartItems">
+          <td>
+            <!-- Imagen miniatura + nombre del producto -->
+            <img [src]="item.imagen" alt="" class="miniatura" />
+            {{ item.nombre }}
+          </td>
+          <td>{{ item.color }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>{{ item.precio | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td>{{ item.precio * item.cantidad | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td>
+            <!-- Botón para eliminar item del carrito -->
+            <span (click)="removeItem(item.id, item.color)" class="eliminar">x</span>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <!-- Fila del total -->
+          <td colspan="4">Total:</td>
+          <td>{{ total | currency:'EUR':'symbol':'1.2-2' }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <!-- Botón para proceder al checkout -->
+    <button id="procesarcompra" (click)="checkout()">PROCESAR COMPRA</button>
+  </div>
