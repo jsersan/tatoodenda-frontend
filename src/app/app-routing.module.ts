@@ -14,6 +14,7 @@ import { AdminComponent } from './components/admin/admin.component';
 
 import { CategoryManagerComponent } from '../app/components/admin/category-manager/category-manager.component';
 import { ProductManagerComponent } from '../app/components/admin/product-manager/product-manager.component';
+import { SearchResultsComponent } from '../app/components/product/search-results/search-results.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'search', component: SearchResultsComponent },
   { 
     path: 'admin', 
     component: AdminComponent, 

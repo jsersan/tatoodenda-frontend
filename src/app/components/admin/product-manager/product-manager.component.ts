@@ -93,21 +93,49 @@ export class ProductManagerComponent implements OnInit {
       });
       return;
     }
-
+  
     // Obtener datos del formulario
     const newProduct: Product = this.newProductForm.value;
     
     // Llamar al servicio para crear producto
     this.productService.addProduct(newProduct).subscribe({
       next: (createdProduct) => {
-        // Mostrar mensaje de éxito y resetear formulario
-        Swal.fire({
-          title: 'El producto se ha añadido con éxito',
-          icon: 'success',
-          confirmButtonColor: '#52667a'
-        });
-        this.newProductForm.reset();
-        this.loadProducts();
+        // Si hay archivos seleccionados, subirlos ahora
+        if (this.selectedFiles.length > 0) {
+          this.productService.uploadProductImages(createdProduct.id, this.selectedFiles).subscribe({
+            next: (result) => {
+              // Mostrar mensaje de éxito y resetear formulario
+              Swal.fire({
+                title: 'El producto y sus imágenes se han añadido con éxito',
+                icon: 'success',
+                confirmButtonColor: '#52667a'
+              });
+              this.newProductForm.reset();
+              this.selectedFiles = []; // Limpiar los archivos seleccionados
+              this.loadProducts();
+            },
+            error: (error) => {
+              console.error('Error uploading images', error);
+              // Producto creado pero hubo un error con las imágenes
+              Swal.fire({
+                title: 'El producto se ha creado pero hubo un problema al subir las imágenes',
+                icon: 'warning',
+                confirmButtonColor: '#52667a'
+              });
+              this.newProductForm.reset();
+              this.loadProducts();
+            }
+          });
+        } else {
+          // No hay imágenes para subir, solo mostrar mensaje de éxito
+          Swal.fire({
+            title: 'El producto se ha añadido con éxito',
+            icon: 'success',
+            confirmButtonColor: '#52667a'
+          });
+          this.newProductForm.reset();
+          this.loadProducts();
+        }
       },
       error: (error) => {
         // Mostrar mensaje de error

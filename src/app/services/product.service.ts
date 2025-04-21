@@ -64,4 +64,17 @@ export class ProductService {
     // Realiza una petición GET a la subURL de colores
     return this.http.get<any[]>(`${this.apiUrl}/${productoId}/colores`);
   }
+
+  // Método para subir imágenes al servidor
+  uploadProductImages(productId: number, files: File[]): Observable<any> {
+  const formData = new FormData();
+  
+  // Añadir cada archivo al FormData
+  files.forEach((file, index) => {
+    formData.append('images', file, file.name);
+  });
+  
+  // Enviar la petición POST al servidor
+  return this.http.post<any>(`${this.apiUrl}/${productId}/images`, formData);
+}
 }

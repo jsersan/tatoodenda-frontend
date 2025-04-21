@@ -1,28 +1,121 @@
-# Tatoodenda
+# TatooDenda - Tienda Frontend en Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.2.
+TatooDenda es una aplicación moderna de comercio electrónico construida con Angular, que ofrece una experiencia completa de compra en línea. Este proyecto implementa una tienda online con todas las funcionalidades para la venta de mercancía, con navegación por categorías, listados de productos, carrito de compras y autenticación de usuarios.
 
-## Development server
+## Características
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Autenticación de Usuario**: Sistema seguro de inicio de sesión y registro con implementación de tokens JWT
+- **Gestión de Productos**: Navegación de productos por categoría, funcionalidad de búsqueda y páginas detalladas de productos
+- **Carrito de Compras**: Añadir, eliminar y gestionar productos en el carrito
+- **Proceso de Compra**: Flujo completo de compra con información de envío
+- **Panel de Administración**: Gestión de productos y categorías a través de una interfaz administrativa
+- **Diseño Responsivo**: Construido con Bootstrap para una experiencia de usuario adaptable
 
-## Code scaffolding
+## Stack Tecnológico
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Angular 15**: Framework de frontend
+- **Bootstrap 5**: Framework CSS para diseño responsivo
+- **ng-bootstrap**: Componentes Bootstrap para Angular
+- **RxJS**: Programación reactiva con Observables
+- **SweetAlert2**: Para notificaciones amigables
+- **JWT**: JSON Web Token para autenticación segura
 
-## Build
+## Estructura del Proyecto
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Componentes**:
+  - **Admin**: Interfaces de gestión de categorías y productos
+  - **Cart**: Funcionalidad del carrito de compras
+  - **Checkout**: Procesamiento de pedidos
+  - **Home**: Página principal con productos destacados
+  - **Product**: Listados de productos, detalles y búsqueda
+  - **Shared**: Componentes de cabecera, pie de página y navegación
+  - **User**: Gestión de autenticación y perfil
 
-## Running unit tests
+- **Servicios**:
+  - **Auth**: Autenticación y registro de usuarios
+  - **Cart**: Gestión del estado del carrito de compras
+  - **Category**: Operaciones de datos de categorías
+  - **Order**: Procesamiento y historial de pedidos
+  - **Product**: Operaciones de datos de productos
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- **Modelos**: Interfaces TypeScript para estructuras de datos
+- **Guards**: Protección de rutas para usuarios autenticados y administradores
+- **Interceptors**: Interceptores HTTP para manejo de tokens JWT
 
-## Running end-to-end tests
+## Primeros Pasos
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Prerrequisitos
 
-## Further help
+- Node.js (v14 o superior)
+- NPM (v6 o superior)
+- Angular CLI (v15.0.2)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Instalación
+
+1. Clonar el repositorio
+```bash
+git clone https://github.com/tuusuario/tatoodenda-frontend.git
+cd tatoodenda-frontend
+```
+
+2. Instalar dependencias
+```bash
+npm install
+```
+
+3. Iniciar el servidor de desarrollo
+```bash
+ng serve
+```
+
+4. Abrir el navegador y navegar a `http://localhost:4200/`
+
+### Configuración del Backend
+
+Esta aplicación frontend espera un backend API REST ejecutándose en la URL especificada en los archivos de entorno:
+
+- Desarrollo: `http://localhost:3000/api` (predeterminado en `environment.ts`)
+- Producción: `/api` (predeterminado en `environment.prod.ts`)
+
+Ajusta estas configuraciones en los archivos de entorno si tu backend se ejecuta en una ubicación diferente.
+
+## Compilación para Producción
+
+```bash
+ng build --configuration production
+```
+
+Los artefactos de compilación se almacenarán en el directorio `dist/tatoodenda`.
+
+## Ejecutar Pruebas
+
+```bash
+# Pruebas unitarias
+ng test
+
+# Pruebas end-to-end
+ng e2e
+```
+
+## Despliegue
+
+La aplicación está configurada para despliegue a través del proceso de compilación estándar de Angular. Después de compilar para producción, el contenido del directorio `dist/tatoodenda` puede desplegarse en cualquier servidor web estático.
+
+## Contribuir
+
+1. Haz un fork del repositorio
+2. Crea tu rama de características (`git checkout -b feature/caracteristica-increible`)
+3. Haz commit de tus cambios (`git commit -m 'Añadir alguna característica increíble'`)
+4. Haz push a la rama (`git push origin feature/caracteristica-increible`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo LICENSE para detalles.
+
+## Agradecimientos
+
+- Al equipo de Angular por el fantástico framework
+- Al equipo de Bootstrap por el sistema de diseño responsivo
+- A todos los colaboradores que han ayudado a dar forma a este proyecto
 # tatoodenda-frontend

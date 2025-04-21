@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CategoryService } from '../../../services/category.service';
-import { Category } from 'src/app/models/category';
-import Swal from 'sweetalert2';
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { CategoryService } from '../../../services/category.service'
+import { Category } from 'src/app/models/category'
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-category-manager',
@@ -11,148 +11,148 @@ import Swal from 'sweetalert2';
 })
 export class CategoryManagerComponent implements OnInit {
   // Array para almacenar todas las categorías
-  categories: Category[] = [];
-  
+  categories: Category[] = []
+
   // Formulario para añadir nuevas categorías
-  newCategoryForm: FormGroup;
-  
+  newCategoryForm: FormGroup
+
   // Formulario para editar categorías existentes
-  editCategoryForm: FormGroup;
-  
+  editCategoryForm: FormGroup
+
   // Flag para controlar si se muestra el formulario de edición
-  showEditForm = false;
-  
+  showEditForm = false
+
   // Variable para almacenar la categoría que se está editando actualmente
-  editingCategory: Category | null = null;
+  editingCategory: Category | null = null
 
   // Constructor con inyección de dependencias
-  constructor(
-    private formBuilder: FormBuilder,        // Para crear formularios reactivos
+  constructor (
+    private formBuilder: FormBuilder, // Para crear formularios reactivos
     private categoryService: CategoryService // Para operaciones CRUD con categorías
   ) {
     // Inicializar formulario para nuevas categorías
     this.newCategoryForm = this.formBuilder.group({
-      nombre: ['', Validators.required],  // Campo obligatorio
-      padre: ['', Validators.required]    // Campo obligatorio
-    });
+      nombre: ['', Validators.required], // Campo obligatorio
+      padre: ['', Validators.required] // Campo obligatorio
+    })
 
     // Inicializar formulario para edición de categorías
     this.editCategoryForm = this.formBuilder.group({
-      id: [''],                          // Campo oculto para el ID
+      id: [''], // Campo oculto para el ID
       nombre: ['', Validators.required], // Campo obligatorio
-      padre: ['', Validators.required]   // Campo obligatorio
-    });
+      padre: ['', Validators.required] // Campo obligatorio
+    })
   }
 
   // Método que se ejecuta al inicializar el componente
-  ngOnInit(): void {
-    this.loadCategories();
+  ngOnInit (): void {
+    this.loadCategories()
   }
 
   // Método para cargar todas las categorías desde el backend
-  loadCategories(): void {
+  loadCategories (): void {
     this.categoryService.getCategories().subscribe({
-      next: (categories) => this.categories = categories,
-      error: (error) => console.error('Error loading categories', error)
-    });
+      next: categories => (this.categories = categories),
+      error: error => console.error('Error loading categories', error)
+    })
   }
 
   // Método para añadir una nueva categoría
-  addCategory(): void {
+  addCategory (): void {
     // Verificar si el formulario es válido
     if (this.newCategoryForm.invalid) {
       Swal.fire({
         title: 'Debes rellenar todos los campos del formulario',
         icon: 'error',
         confirmButtonColor: '#52667a'
-      });
-      return;
+      })
+      return
     }
 
     // Obtener datos del formulario
-    const newCategory: Category = this.newCategoryForm.value;
+    const newCategory: Category = this.newCategoryForm.value
     // Lógica especial para categorías "Sin Padre"
     if (String(newCategory.padre) === 'sin') {
-      newCategory.padre = -1; // Valor temporal, se actualizará en el backend
+      newCategory.padre = -1 // Valor temporal, se actualizará en el backend
     }
     // Llamar al servicio para crear la categoría
     this.categoryService.addCategory(newCategory).subscribe({
-      next: (result) => {
+      next: result => {
         // Mostrar mensaje de éxito
         Swal.fire({
           title: 'La categoría se ha añadido con éxito',
           icon: 'success',
           confirmButtonColor: '#52667a'
-        });
+        })
         // Reiniciar formulario y recargar categorías
-        this.newCategoryForm.reset();
-        this.loadCategories();
+        this.newCategoryForm.reset()
+        this.loadCategories()
       },
-      error: (error) => {
+      error: error => {
         // Mostrar mensaje de error
         Swal.fire({
           title: 'Error al añadir la categoría',
           icon: 'error',
           confirmButtonColor: '#52667a'
-        });
+        })
       }
-    });
+    })
   }
 
   // Método para preparar la edición de una categoría
-  editCategory(category: Category): void {
+  editCategory (category: Category): void {
     // Guardar referencia a la categoría en edición
-    this.editingCategory = category;    
+    this.editingCategory = category
     // Establecer valores en el formulario de edición
     this.editCategoryForm.setValue({
       id: category.id,
       nombre: category.nombre,
       padre: category.padre === category.id ? 'sin' : category.padre
-    });
-    
+    })
+
     // Mostrar el formulario de edición
-    this.showEditForm = true;
+    this.showEditForm = true
   }
 
   // Método para actualizar una categoría editada
-  updateCategory(): void {
+  updateCategory (): void {
     // Verificar si el formulario es válido
-    if (this.editCategoryForm.invalid) return;
+    if (this.editCategoryForm.invalid) return
     // Obtener datos del formulario
-    const updatedCategory: Category = this.editCategoryForm.value;
-    
+    const updatedCategory: Category = this.editCategoryForm.value
+
     // Lógica especial para categorías "Sin Padre"
     if (String(updatedCategory.padre) === 'sin') {
-      updatedCategory.padre = updatedCategory.id;
+      updatedCategory.padre = updatedCategory.id
     }
 
     // Llamar al servicio para actualizar la categoría
     this.categoryService.updateCategory(updatedCategory).subscribe({
-      next: (result) => {
+      next: result => {
         // Mostrar mensaje de éxito
         Swal.fire({
           title: 'La categoría se ha actualizado con éxito',
           icon: 'success',
           confirmButtonColor: '#52667a'
-        });
+        })
         // Ocultar formulario y recargar categorías
-        this.showEditForm = false;
-        this.editingCategory = null;
-        this.loadCategories();
+        this.showEditForm = false
+        this.editingCategory = null
+        this.loadCategories()
       },
-      error: (error) => {
+      error: error => {
         // Mostrar mensaje de error
         Swal.fire({
           title: 'Error al actualizar la categoría',
           icon: 'error',
           confirmButtonColor: '#52667a'
-        });
+        })
       }
-    });
+    })
   }
 
   // Método para eliminar una categoría
-  deleteCategory(id: number): void {
+  deleteCategory (id: number): void {
     // Pedir confirmación antes de eliminar
     Swal.fire({
       title: '¿Estás seguro de eliminar esta categoría?',
@@ -162,7 +162,7 @@ export class CategoryManagerComponent implements OnInit {
       cancelButtonColor: '#52667a',
       confirmButtonText: 'Borrar la categoría',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(result => {
       if (result.value) {
         // Usuario confirmó, proceder con eliminación
         this.categoryService.deleteCategory(id).subscribe({
@@ -172,34 +172,34 @@ export class CategoryManagerComponent implements OnInit {
               title: 'La categoría se ha eliminado con éxito',
               icon: 'success',
               confirmButtonColor: '#52667a'
-            });
+            })
             // Recargar categorías
-            this.loadCategories();
+            this.loadCategories()
           },
-          error: (error) => {
+          error: error => {
             // Mostrar mensaje de error
             Swal.fire({
               title: 'Error al eliminar la categoría',
               icon: 'error',
               confirmButtonColor: '#52667a'
-            });
+            })
           }
-        });
+        })
       }
-    });
+    })
   }
 
   // Método para cancelar la edición
-  cancelEdit(): void {
-    this.showEditForm = false;
-    this.editingCategory = null;
+  cancelEdit (): void {
+    this.showEditForm = false
+    this.editingCategory = null
   }
 
   // Método para obtener el nombre de la categoría padre
-  getParentCategoryName(parentId: number): string {
-    if (!parentId || parentId === 0) return 'Sin Padre';
-    
-    const parentCategory = this.categories.find(c => c.id === parentId);
-    return parentCategory ? parentCategory.nombre : 'Desconocido';
+  getParentCategoryName (parentId: number): string {
+    if (!parentId || parentId === 0) return 'Sin Padre'
+
+    const parentCategory = this.categories.find(c => c.id === parentId)
+    return parentCategory ? parentCategory.nombre : 'Desconocido'
   }
 }
