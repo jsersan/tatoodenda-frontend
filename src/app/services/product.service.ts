@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product } from '../models/product';
+import { of } from 'rxjs';
 
 // Este decorador permite que el servicio sea inyectable en otros componentes/servicios
 @Injectable({
@@ -10,17 +11,55 @@ import { Product } from '../models/product';
 })
 export class ProductService {
   // URL base para las peticiones a la API de productos
-  private apiUrl = `${environment.apiUrl}/productos`;
+  private apiUrl = `${environment.apiUrl}/producto`;
 
   // Inyección de dependencias: HttpClient para realizar peticiones HTTP
   constructor(private http: HttpClient) { }
 
   // Método para obtener todos los productos
   // Devuelve un Observable que emitirá un array de productos
-  getProducts(): Observable<Product[]> {
-    // Realiza una petición GET a la API y castea la respuesta a un array de Productos
+
+/*   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
-  }
+  } */
+
+   getProducts(): Observable<Product[]> {
+      const mockProducts: Product[] = [
+      {
+        id: 1,
+        nombre: "Dilatador Acrílico",
+        descripcion: "Dilatador acrílico de alta calidad disponible en varios colores",
+        precio: 9.99,
+        carpetaimg: "dilataciones",
+        imagen: "dilatador1.jpg",
+        categoria: 1
+      },
+      {
+        id: 2,
+        nombre: "Piercing de Labio",
+        descripcion: "Piercing para labio en acero quirúrgico",
+        precio: 12.99,
+        carpetaimg: "piercings",
+        imagen: "piercing1.jpg",
+        categoria: 2
+      },
+      {
+        id: 3, 
+        nombre: "Dilatador de Madera",
+        descripcion: "Dilatador artesanal fabricado en madera natural",
+        precio: 14.95,
+        carpetaimg: "dilataciones",
+        imagen: "dilatador2.jpg",
+        categoria: 1
+      }
+    ];
+    
+    return of(mockProducts); 
+     
+    //Comentar temporalmente la llamada real a la API
+    // return this.http.get<Product[]>(this.apiUrl);
+  } 
+
 
   // Método para obtener productos filtrados por categoría
   getProductsByCategory(categoryId: number): Observable<Product[]> {

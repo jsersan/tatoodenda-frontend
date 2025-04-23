@@ -60,10 +60,14 @@ export class NavbarComponent implements OnInit {
   // Método para cargar las categorías desde el servicio
   loadCategories(): void {
     this.categoryService.getCategories().subscribe({
-      next: (categories) => this.categories = categories,
+      next: (categories) => {
+        this.categories = categories;
+        console.log('Categorías cargadas:', categories); // Añade este log
+        console.log('Categorías principales:', this.getMainCategories()); // Añade este log
+      },
       error: (error) => console.error('Error loading categories', error)
     });
-  }
+  }  
 
   // Método para procesar la búsqueda cuando el usuario la envía
   search(): void {
@@ -88,13 +92,13 @@ export class NavbarComponent implements OnInit {
 
   // Método para obtener solo las categorías principales (padre = id)
   getMainCategories(): Category[] {
-    return this.categories.filter(cat => cat.id === cat.padre);
+    return this.categories.filter(cat => cat.id === cat.parent);
   }
 
   // Método para obtener subcategorías de una categoría principal
   getSubcategories(categoryId: number): Category[] {
     return this.categories.filter(cat => 
-      cat.padre === categoryId && cat.id !== cat.padre
+      cat.parent === categoryId && cat.id !== cat.parent
     );
   }
 }

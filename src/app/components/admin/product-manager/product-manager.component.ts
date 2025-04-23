@@ -71,7 +71,7 @@ export class ProductManagerComponent implements OnInit {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
         // Filtrar solo categorías que no son padres (subcategorías)
-        this.categories = categories.filter(cat => cat.id !== cat.padre);
+        this.categories = categories.filter(cat => cat.id !== cat.parent);
       },
       error: (error) => console.error('Error loading categories', error)
     });
@@ -237,7 +237,7 @@ export class ProductManagerComponent implements OnInit {
   // Método para obtener el nombre de una categoría por su ID
   getCategoryName(categoryId: number): string {
     const category = this.categories.find(c => c.id === categoryId);
-    return category ? category.nombre : 'Desconocido';
+    return category ? category.name : 'Desconocido';
   }
 
   // Método para formatear precio como moneda

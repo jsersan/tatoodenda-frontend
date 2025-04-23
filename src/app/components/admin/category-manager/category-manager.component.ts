@@ -72,8 +72,8 @@ export class CategoryManagerComponent implements OnInit {
     // Obtener datos del formulario
     const newCategory: Category = this.newCategoryForm.value
     // Lógica especial para categorías "Sin Padre"
-    if (String(newCategory.padre) === 'sin') {
-      newCategory.padre = -1 // Valor temporal, se actualizará en el backend
+    if (String(newCategory.parent) === 'sin') {
+      newCategory.parent = -1 // Valor temporal, se actualizará en el backend
     }
     // Llamar al servicio para crear la categoría
     this.categoryService.addCategory(newCategory).subscribe({
@@ -106,8 +106,8 @@ export class CategoryManagerComponent implements OnInit {
     // Establecer valores en el formulario de edición
     this.editCategoryForm.setValue({
       id: category.id,
-      nombre: category.nombre,
-      padre: category.padre === category.id ? 'sin' : category.padre
+      nombre: category.name,
+      padre: category.parent === category.id ? 'sin' : category.parent
     })
 
     // Mostrar el formulario de edición
@@ -122,8 +122,8 @@ export class CategoryManagerComponent implements OnInit {
     const updatedCategory: Category = this.editCategoryForm.value
 
     // Lógica especial para categorías "Sin Padre"
-    if (String(updatedCategory.padre) === 'sin') {
-      updatedCategory.padre = updatedCategory.id
+    if (String(updatedCategory.parent) === 'sin') {
+      updatedCategory.parent = updatedCategory.id
     }
 
     // Llamar al servicio para actualizar la categoría
@@ -200,6 +200,6 @@ export class CategoryManagerComponent implements OnInit {
     if (!parentId || parentId === 0) return 'Sin Padre'
 
     const parentCategory = this.categories.find(c => c.id === parentId)
-    return parentCategory ? parentCategory.nombre : 'Desconocido'
+    return parentCategory ? parentCategory.name : 'Desconocido'
   }
 }

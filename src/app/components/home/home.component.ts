@@ -57,15 +57,16 @@ export class HomeComponent implements OnInit {
   }
 
   // Método para cargar productos desde el servicio
-  loadProducts(): void {
-    // Llamamos al método getProducts del servicio, que devuelve un Observable
-    this.productService.getProducts().subscribe({
-      // Cuando el Observable emite productos (éxito), los asignamos a la propiedad products
-      next: (products) => this.products = products,
-      // Si ocurre un error, lo registramos en la consola
-      error: (error) => console.error('Error loading products', error)
-    });
-  }
+  // En home.component.ts
+loadProducts(): void {
+  this.productService.getProducts().subscribe({
+    next: (products) => {
+      this.products = products;
+      console.log('Productos cargados:', products); // Añade este log
+    },
+    error: (error) => console.error('Error loading products', error)
+  });
+}
 
   // Método para cargar las imágenes del banner
   // En una app real, esto podría venir de la API, pero aquí lo simulamos con rutas estáticas

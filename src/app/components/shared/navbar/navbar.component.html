@@ -8,21 +8,18 @@
         
         <!-- Iteración sobre las categorías principales -->
         <li class="menuitem elem" *ngFor="let category of getMainCategories()">
-          <!-- Nombre de la categoría principal -->
           <span [attr.data_id]="category.id" class="categoria">
-            {{ category.nombre.toUpperCase() }}
+            {{ category.name.toUpperCase() }}
           </span>
           
-          <!-- Submenú para las subcategorías (inicialmente oculto, se muestra al hacer hover) -->
           <ul [id]="'subcat' + category.id" class="subcat">
-            <!-- Iteración sobre las subcategorías de esta categoría principal -->
             <li 
               *ngFor="let subcategory of getSubcategories(category.id)" 
               [attr.data_id]="subcategory.id" 
               class="menuitem categoria"
               [routerLink]="['/category', subcategory.id]"
             >
-              {{ subcategory.nombre.toUpperCase() }}
+              {{ subcategory.name.toUpperCase() }}
             </li>
           </ul>
         </li>

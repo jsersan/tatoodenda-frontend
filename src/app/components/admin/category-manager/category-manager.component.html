@@ -13,7 +13,7 @@
           <option value="" selected disabled hidden></option>
           <option value="sin">Sin Padre</option>
           <option *ngFor="let category of categories" [value]="category.id">
-            {{ category.nombre }}
+            {{ category.name }}
           </option>
         </select>
         
@@ -34,7 +34,7 @@
           <option *ngFor="let category of categories" 
                   [value]="category.id"
                   [disabled]="category.id === editCategoryForm.get('id')?.value">
-            {{ category.nombre }}
+            {{ category.name }}
           </option>
         </select>
         
@@ -54,9 +54,9 @@
           <th></th>
         </tr>
         <tr *ngFor="let category of categories" [id]="'cat' + category.id">
-          <td class="catnom">{{ category.nombre }}</td>
-          <td class="catpadre" [attr.data-id]="category.padre">
-            {{ getParentCategoryName(category.padre) }}
+          <td class="catnom">{{ category.name }}</td>
+          <td class="catpadre" [attr.data-id]="category.parent">
+            {{ getParentCategoryName(category.parent) }}
           </td>
           <td>
             <input [attr.data-id]="category.id" type="button" class="editarcat" value="EDITAR" 

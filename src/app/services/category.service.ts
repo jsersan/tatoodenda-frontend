@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Category } from '../models/category';
+import { of } from 'rxjs';
+import * as rxjsOperators from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 // Este decorador permite que el servicio sea inyectable en otros componentes/servicios
 @Injectable({
@@ -10,16 +13,53 @@ import { Category } from '../models/category';
 })
 export class CategoryService {
   // URL base para las peticiones a la API de categorías, obtenida del archivo de entorno
-  private apiUrl = `${environment.apiUrl}/categorias`;
+  private apiUrl = `${environment.apiUrl}/categoria`;
 
   // Inyección de dependencias: HttpClient para realizar peticiones HTTP
   constructor(private http: HttpClient) { }
 
   // Método para obtener todas las categorías
   // Devuelve un Observable que emitirá un array de categorías
-  getCategories(): Observable<Category[]> {
-    // Realiza una petición GET a la API y castea la respuesta a un array de Categoria
+/*   getCategories(): Observable<Category[]> {
+
+     const mockCategories: Category[] = [
+      { id: 1, nombre: "Dilataciones", padre: 1 },
+      { id: 2, nombre: "Piercings", padre: 2 },
+      { id: 3, nombre: "Dilatadores Acrílicos", padre: 1 },
+      { id: 4, nombre: "Dilatadores de Madera", padre: 1 },
+      { id: 5, nombre: "Piercings de Labio", padre: 2 },
+      { id: 6, nombre: "Piercings de Nariz", padre: 2 }
+    ];
+    
+    return of(mockCategories);  */
+    
+    // Comentar temporalmente la llamada real a la API
+    // return this.http.get<Category[]>(this.apiUrl);
+  
+
+/*   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrl);
+  } */
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<{error: boolean, data: any[]}>(`${this.apiUrl}/categoria`)
+      .pipe(
+        rxjsOperators.map((response) => {
+          if (response.error) {
+            throw new Error('Error al obtener categorías');
+          }
+          // Transformamos los datos recibidos al formato que espera nuestro modelo Category
+          return response.data.map((cat) => ({
+            id: cat.id,
+            name: cat.nombre,
+            parent: cat.padre
+          }));
+        }),
+        rxjsOperators.catchError((error) => {
+          console.error('Error al obtener categorías:', error);
+          return of([]); // Devolvemos un array vacío en caso de error
+        })
+      );
   }
 
   // Método para obtener una categoría específica por su ID

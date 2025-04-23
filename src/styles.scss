@@ -56,7 +56,7 @@ header {
   
   li {
     list-style: none;
-    height: 30px;
+    height: 45px;
     padding: 10px 30px;
     
     &.menuitem {
@@ -74,16 +74,21 @@ header {
   border-radius: 10px;
   box-shadow: $primary 0px 5px 5px -5px;
   display: none;
+  z-index: 1000; /* Añadido: asegura que el submenú esté por encima de otros elementos */
   
   li {
     border-top: solid 1px $primary-light;
     padding: 7px 0 0;
     min-width: 150px;
+    display: block; /* Añadido: asegura que cada elemento de lista se muestre en su propia línea */
+    margin-bottom: 5px; /* Añadido: añade espacio entre elementos */
   }
 }
 
 .elem:hover .subcat {
   display: block;
+  max-height: 500px; /* Añadido: permite que el submenú crezca lo suficiente */
+  overflow-y: visible; /* Añadido: permite desplazamiento si hay muchos elementos */
 }
 
 /* Banner */
@@ -113,6 +118,564 @@ header {
   }
 }
 
+/*********TEXTO/FORM*******/
+#arttext {
+  margin-left: -10%;
+}
+.verarticulo h2 {
+  font-size: 1em;
+  text-align: right;
+  padding-right: 20px;
+}
+.verarticulo form {
+  text-align: center;
+  position: absolute;
+  bottom: 40px;
+  right: 160px;
+}
+
+/********* CANTIDAD **********/
+.cantidad input[type=number] {
+  width: 40px;
+  text-align: right
+
+}
+/********VISUALIZACIÓN DEL CARRITO********/
+.vercarrito {
+  width: 80%;
+  height: 60%;
+  top: 15%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.vercarrito table {
+  width: 95%;
+  max-height: 80%;
+  text-align: center;
+  border-collapse: collapse;
+  margin: 0 auto;
+  display: block;
+  height: 80%;
+
+  img {
+      vertical-align: middle;
+  }
+  thead {
+      tr {
+          :nth-child(1) {
+              width: 39.5%;
+          }
+          :nth-child(2) {
+              width: 20%;
+          }
+          :nth-child(3) {
+              width: 15%;
+          }
+          :nth-child(4), :nth-child(5) {
+              width: 15%;
+          }
+          :nth-child(5) span {
+              position: relative;
+              left: 20px;
+          }
+      }
+  }
+  tbody {
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: block;
+      max-height: 85%;
+
+      tr {
+          :nth-child(1) {
+              width: 35%;
+              img {
+                  width: 25px;
+              }
+          }
+          :nth-child(2) {
+              width: 20%;
+          }
+          :nth-child(3), :nth-child(4), :nth-child(5) {
+              width: 15%;
+          }
+      }
+  }
+  tfoot tr {
+      td {
+          padding-top: 20px;
+      }
+      td:first-of-type {
+          font-weight: bold;
+          font-size: 1.2em;
+          text-align: right;
+          width: 88%;
+      }
+      :nth-child(2) {
+          width: 15%;
+          text-align: left;
+          padding-left: 25px;
+      }
+      :nth-child(3) {
+          width: 10%;
+      }
+  }
+}
+.vercarrito table tr td:nth-child(1) {
+  text-align: left;
+}
+.vercarrito table tr td {
+  padding: 0 15px;
+}
+.vercarrito table tr th {
+  padding: 15px 0;
+}
+.vercarrito table b {
+  text-align: right;
+}
+.vercarrito #procesarcompra {
+  width: 180px;
+  margin: 0 auto;
+}
+.vercarrito .eliminar {
+  cursor: pointer;
+}
+/*********VISUALIZACIÓN DEL LOGIN*********/
+.verlogin {
+  width: 300px;
+  height: 220px;
+  position: fixed;
+  top: 250px;
+  padding-bottom: 20px !important;
+  flex-direction: column;
+
+}
+.verlogin h1 {
+  text-align: center;
+  margin-bottom: 10px !important;
+}
+.verlogin input[type='submit'] {
+  padding: 5px;
+  width: 150px;
+  margin: 15px auto 0;
+}
+/**********REGISTRO***********/
+.verregistro {
+  flex-direction: column;
+  width: 530px;
+  height: 330px;
+}
+.verregistro h1 {
+  text-align: center;
+  margin-bottom: 15px !important;
+}
+.verregistro table tr td:first-of-type {
+  text-align: right;
+}
+.verregistro input[type='submit'] {
+  padding: 10px 0;
+  width: 150px;
+  margin: 30px auto 0;
+}
+/******** CHECKOUT **********/
+.vercheckout {
+  flex-direction: column;
+  width: 800px;
+  height: 400px;
+}
+.vercheckout table {
+  text-align: center;
+  border-collapse: collapse;
+  
+  thead, tbody, tfoot {
+      display: block;
+  }
+
+  thead {
+      td:first-of-type {
+          text-align: left;
+          padding-left: 20px;
+      }
+  }
+  tbody {
+      max-height: 88px;
+      overflow-y: auto;
+      overflow-x: hidden;
+  }
+  tfoot {
+      tr {
+          :first-child {
+              width: 670px;
+              text-align: right;
+              font-weight: bold;
+          }
+          :last-child {
+              width: 120px;
+              text-align: right;
+              padding-right: 37px
+          }
+      }
+  }
+  tr {
+      :nth-child(1) {
+          width: 250px;
+          text-align: left;
+          padding-left: 20px;
+      }
+      :nth-child(2) {
+          width: 175px;
+      }
+      :nth-child(3) {
+          width: 125px;
+      }
+      th {
+          padding-bottom: 10px;
+          text-align: center !important;
+      }
+      td {
+      }
+      :nth-child(4), :nth-child(5) {
+          text-align: right !important;
+          width: 125px;
+          padding-right: 20px;
+      }
+  }
+
+}
+.vercheckout #receptor {
+  display: flex;
+  justify-content: space-around;
+  .datos {
+      padding-left: 40px;
+  }
+}
+.vercheckout #comprar {
+  position: absolute;
+  bottom: 40px;
+  left: 380px;
+  width: 120px;
+}
+/**********FOOTER************/
+footer {
+  background-color: rgb(86, 79, 79);
+  color: $background;
+  text-align: center;
+  padding: 30px 0;
+  margin-top: 50px;
+  clear: both;
+  position: relative;
+  bottom: -120px;
+  margin: 50px -58px 0 -58px;
+}
+
+////////////////////ADMINISTRADOR/////////////////////
+#divadmin {
+  input[type='button'], input[type='submit'],  {
+      padding: 5px 10px !important;
+      margin-left: 20px;
+  }
+}
+#divadmin #titulo {
+  font-size: 8em;
+  width: 80%;
+  border: none !important;
+}
+#divadmin h1 {
+  font-family: 'Lovers Quarrel';
+  font-size: 6em;
+  font-weight: normal;
+  margin: 0;
+  width: 100%;
+  display: block;
+}
+#divadmin > div {
+  padding: 30px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+#divadmin table tr th {
+  text-transform: capitalize;
+}
+#divadmin table tr td {
+  padding: 10px;
+}
+#divadmin table tr td[colspan='2'] {
+  text-align: center;
+}
+
+/********* Edición de categorías*********/
+.vereditcat {
+  flex-direction: column;
+  width: 300px;
+  height: 200px;
+  justify-content: space-between;
+}
+.vereditcat h1 {
+  margin-bottom: 20px !important;
+}
+.vereditcat input[type='submit'] {
+  margin: 30px auto 0;
+}
+/*********Edición de artículos*********/
+.vereditart {
+  flex-direction: column;
+  width: 600px;
+  height: 300px;
+  justify-content: space-between;
+
+  input[type='submit'] {
+      width: 175px;
+      margin: 30px auto 0;
+  }
+}
+.vereditart input[type='number'] {
+  width: 40px;
+}
+
+/*********Colores del nuevo artículo*********/
+.veraddcolores {
+  flex-direction: column;
+  width: 600px;
+  height: 370px;
+}
+.veraddcolores div {
+  margin: 10px auto;
+}
+.veraddcolores table {
+  text-align: center;
+}
+.veraddcolores input[type='submit'] {
+  margin: 20px 10px 0;
+}
+
+////////////////////// PROFILE //////////////////////////
+#divdatos table {
+  margin: 30px auto 20px;
+}
+#divdatos table tr td:first-of-type {
+  text-align: right;
+}
+#divdatos table tr td {
+  padding: 5px 10px;
+}
+#divdatos input[type='button'] {
+  margin-top: 20px;
+}
+
+#divpedidos {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+}
+#pedidos .pedido table {
+  margin: 60px auto;
+  border-collapse: collapse;
+  width: 628px;
+
+  :not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
+      display: none;
+  }
+  tr:nth-of-type(2) {
+      display: none;
+  }
+  tr:nth-of-type(3) {
+      display: none;
+  }
+  .titulo {
+      font-family: 'Lovers Quarrel';
+      font-size: 2.5em;
+      background-color: $primary;
+      color: $background;
+      border: none;
+      width: 628px;
+
+      div.see {
+          display: inline-block !important;
+          margin-left: 10px;
+          cursor: pointer;
+
+          img:first-of-type {
+              width: 20px;
+              position: relative;
+              left: 5px;
+              top: 7px;
+          }
+          img:last-of-type {
+              width: 12px;
+          }
+      }
+
+      th {
+          font-weight: normal;
+          padding: 0px 20px;
+      }
+      th:first-of-type {
+          text-align: left;
+          width: 300px;
+      }
+      th:nth-of-type(2) {
+          text-align: right;
+          width: 180px;
+          padding: 0;
+          span {
+              position: relative;
+              left: 70px;
+          }
+      }
+      th:nth-of-type(3) {
+          text-align: right;
+          width: 120px;
+      }
+  }
+  tr {
+
+      th, td {
+          padding: 5px 20px;
+      }
+      th {
+          padding: 15px 20px 10px;
+      }
+  }
+  
+  tr td:first-child {
+      width: 300px;
+  }
+  tr td:nth-child(2) {
+      width: 180px;
+      text-align: center;
+  }
+  tr td:last-of-type {
+      text-align: right;
+      padding-right: 20px;
+      width: 120px;
+  }
+  tr:last-of-type {
+      td {
+          padding-top: 20px;
+      }
+
+      td:first-of-type {
+          text-align: right;
+          font-weight: bold;
+      }
+      
+  }
+}
+
+/*********** CERRAR **********/
+#cerrar {
+  border: none;
+  background-color: transparent;
+  font-size: 4em;
+  font-family: 'Montez';
+  color: darkblue;
+  position: absolute;
+  top: -20px;
+  right: 15px;
+  cursor: pointer;
+}
+/*********MODALES****/
+#modal {
+  position: fixed;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  padding: 40px;
+  background-color: $background;
+}
+#modal h1 {
+  font-family: 'Lovers Quarrel', cursive;
+  font-size: 3em;
+  margin: 0;
+  font-weight: normal;
+}
+
+/******** BLOQUEO ********/
+#block {
+  background-color: $primary;
+  opacity: 0.75;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+select {
+  padding: 3px;
+}
+input[type='button'], input[type='submit'], a {
+  cursor: pointer;
+}
+
+#search {
+  order: 5;
+}
+#search input {
+  padding: 7px;
+
+  box-shadow: none !important;
+  position: relative; 
+  top: -7px;
+  width: 225px;
+}
+#search img {
+  cursor: pointer;
+  width: 16px;
+  position: relative;
+  right: 30px;
+  top: -5px;
+}
+
+.adminoptions {
+  order: 6;
+  position: relative;
+  top: -5px;
+}
+.profile {
+  order: 6;
+  position: relative;
+  top: -5px;
+}
+
+#imgprofile {
+  width: 20px;
+  position: relative;
+  top: 4px;
+  margin-right: 5px;
+}
+
+#login {
+  order: 7;
+  position: relative;
+  top: -7px;
+  padding-left: 0 !important;
+}
+#carrito {
+  order: 8;
+  position: relative;
+  top: -7px;
+  padding-left: 0 !important;
+}
+#carrito p {
+  background-color: $primary;
+  color: $background;
+  font-size: .8em;
+  position: relative;
+  top: -35px;
+  left: 17px;
+  border-radius: 15px;
+  padding: 4px 0;
+  padding-left: 8px;
+  width: 15px;
+}
+
 /* Títulos de sección */
 #titulo {
   font-family: 'Lovers Quarrel', cursive;
@@ -122,6 +685,35 @@ header {
   text-transform: lowercase;
   margin: 20px 55px 0;
   border-bottom: solid 1px $primary-light;
+}
+
+/******VISUALIZACIÓN DE UN ARTÍCULO**********/
+.verarticulo {
+  width: 60%;
+  height: 300px;
+}
+/******IMÁGENES******/
+.verarticulo img {
+  padding: 4px;
+}
+#artimgs {
+  max-width: 50%;
+}
+#imgart {
+  width: 50%;
+  margin: 10px;
+  margin-right: 50px;
+}
+#divminiaturas {
+  width: 45%;
+  height: 25%;
+  position: relative;
+  left: 30px;
+}
+.miniatura {
+  cursor: pointer;
+  margin: 5px;
+  width: 25px;
 }
 
 /* Artículos */
@@ -164,163 +756,3 @@ header {
   }
 }
 
-/* Footer */
-footer {
-  background-color: $primary-dark;
-  color: white;
-  text-align: center;
-  padding: 30px 0;
-  margin-top: 50px;
-  clear: both;
-  position: relative;
-  bottom: -120px;
-  margin: 50px -58px 0 -58px;
-}
-
-/* Formularios */
-form {
-  input, select, textarea {
-    font-family: $default-font;
-    padding: 5px;
-    margin: 5px;
-    @include borders;
-    
-    &.is-invalid {
-      border-color: red;
-    }
-  }
-  
-  button, input[type="submit"], input[type="button"] {
-    @include button;
-  }
-  
-  .invalid-feedback {
-    color: red;
-    font-size: 0.8em;
-    margin-left: 5px;
-  }
-}
-
-/* Paneles modales */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba($primary, 0.75);
-  z-index: 1000;
-}
-
-.modal-panel {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 40px;
-  border-radius: 5px;
-  z-index: 1001;
-  max-width: 80%;
-  max-height: 80%;
-  overflow: auto;
-  
-  h1 {
-    font-family: 'Lovers Quarrel', cursive;
-    font-size: 3em;
-    margin: 0 0 20px 0;
-    font-weight: normal;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 2em;
-    border: none;
-    background: transparent;
-    color: $primary-dark;
-    cursor: pointer;
-  }
-}
-
-/* Carrito y checkout */
-.vercarrito, .vercheckout {
-  width: 95%;
-  margin: 20px auto;
-  
-  table {
-    width: 100%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-    
-    th {
-      background-color: $primary-light;
-    }
-    
-    td {
-      border-top: 1px solid $primary-light;
-    }
-    
-    tfoot td {
-      font-weight: bold;
-    }
-    
-    .eliminar {
-      cursor: pointer;
-      color: red;
-      font-weight: bold;
-    }
-  }
-  
-  button {
-    @include button;
-    display: block;
-    margin: 20px auto;
-  }
-}
-
-/* Admin panel */
-#divadmin {
-  padding: 20px;
-  
-  #titulo {
-    font-size: 4em;
-    margin-bottom: 20px;
-  }
-  
-  .admin-nav {
-    margin-bottom: 30px;
-    
-    ul {
-      display: flex;
-      padding: 0;
-      margin: 0;
-      
-      li {
-        list-style: none;
-        margin-right: 20px;
-        
-        a {
-          color: $primary;
-          text-decoration: none;
-          padding: 10px;
-          
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-        
-        &.active a {
-          font-weight: bold;
-          border-bottom: 2px solid $primary;
-        }
-      }
-    }
-  }
-}
