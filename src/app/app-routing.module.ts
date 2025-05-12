@@ -1,38 +1,35 @@
-// app-routing.module.ts
+// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from '../app/components/home/home.component';
-import { ProductListComponent } from '../app/components/product/product-list/product-list.component';
-import { ProductDetailComponent } from '../app/components/product/product-detail/product-detail.component';
-import { CartComponent } from '../app/components/cart/cart.component';
-import { CheckoutComponent } from '../app/components/checkout/checkout.component';
+import { RouterModule, Routes } from '@angular/router';
 
+import { HomeComponent } from './components/home/home.component';
+import { ProductListComponent } from './components/product/product-list/product-list.component';
+import { ProductDetailComponent } from './components/product/product-detail/product-detail.component';
+import { CartComponent } from './components/cart/cart.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
+import { SearchResultsComponent } from './components/product/search-results/search-results.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegisterComponent } from './components/user/register/register.component';
 import { ProfileComponent } from './components/user/profile/profile.component';
 import { AdminComponent } from './components/admin/admin.component';
-
-import { CategoryManagerComponent } from '../app/components/admin/category-manager/category-manager.component';
-import { ProductManagerComponent } from '../app/components/admin/product-manager/product-manager.component';
-import { SearchResultsComponent } from '../app/components/product/search-results/search-results.component';
-import { authGuard } from './guards/auth.guard';
-import { adminGuard } from './guards/admin.guard';
+import { CategoryManagerComponent } from './components/admin/category-manager/category-manager.component';
+import { ProductManagerComponent } from './components/admin/product-manager/product-manager.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'products', component: ProductListComponent },
-  { path: 'product/:id', component: ProductDetailComponent },
+  { path: 'productos', component: ProductListComponent },
   { path: 'category/:id', component: ProductListComponent },
+  { path: 'product/:id', component: ProductDetailComponent },
+  { path: 'ver-todo', component: ProductListComponent, data: { isViewAll: true }}, // Esta debe existir
   { path: 'cart', component: CartComponent },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
+  { path: 'checkout', component: CheckoutComponent },
+  { path: 'search', component: SearchResultsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  { path: 'search', component: SearchResultsComponent },
+  { path: 'profile', component: ProfileComponent },
   { 
     path: 'admin', 
-    component: AdminComponent, 
-    canActivate: [authGuard, adminGuard],
+    component: AdminComponent,
     children: [
       { path: '', redirectTo: 'products', pathMatch: 'full' },
       { path: 'categories', component: CategoryManagerComponent },
@@ -47,3 +44,7 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+
+
+

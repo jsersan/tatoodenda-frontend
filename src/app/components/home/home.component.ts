@@ -10,98 +10,77 @@ import { ProductService } from '../../services/product.service';
   // El selector CSS que se usará para insertar este componente en otras plantillas
   selector: 'app-home',
   // La ruta a la plantilla HTML que define la estructura visual de este componente
-  templateUrl: './home.component.html',
-  // Las rutas a los archivos de estilos para este componente específico
-  styleUrls: ['./home.component.scss']
+  templateUrl: './home.component.html'
+  // styleUrls eliminado ya que los estilos se han fusionado en el archivo global
 })
 // La clase del componente que implementa OnInit (interfaz del ciclo de vida)
 export class HomeComponent implements OnInit {
   // Propiedades de clase:
   
-  // Array para almacenar los productos que se mostrarán en la página principal
+  // Array para almacenar todos los productos
   products: Product[] = [];
   
-  // Array para almacenar las rutas a las imágenes del banner
-  bannerImages: string[] = [];
+  // Array para almacenar los 8 productos aleatorios que se mostrarán
+  randomProducts: Product[] = [];
   
-  // Variable para mantener track de qué imagen del banner se está mostrando
-  currentBannerIndex = 0;
-  
-  // Variable para almacenar la referencia al temporizador del banner
-  // Necesario para detenerlo cuando el componente se destruya
-  bannerInterval: any;
+  // Indicador de carga
+  loading: boolean = false;
 
   // Constructor del componente donde inyectamos las dependencias
-  // productService se inyecta automáticamente gracias al sistema de DI de Angular
-  constructor(private productService: ProductService) { }
+  // productService se inyecta como público para poder acceder desde la plantilla
+  constructor(public productService: ProductService) { }
 
   // Método de ciclo de vida que se ejecuta cuando Angular ha terminado de inicializar el componente
   ngOnInit(): void {
     // Cargamos la lista de productos
     this.loadProducts();
-    
-    // Cargamos las imágenes del banner
-    this.loadBannerImages();
-    
-    // Iniciamos la rotación automática del banner
-    this.startBannerRotation();
   }
 
-  // Método del ciclo de vida que se ejecuta cuando el componente va a ser destruido
-  // Importante para limpiar recursos y evitar memory leaks
-  ngOnDestroy(): void {
-    // Si hay un intervalo de banner activo, lo eliminamos para evitar que siga ejecutándose
-    if (this.bannerInterval) {
-      clearInterval(this.bannerInterval);
+  // Método para cargar productos desde el servicio y seleccionar 8 aleatorios
+  loadProducts(): void {
+    this.loading = true;
+    console.log('HomeComponent: Cargando productos...');
+    
+    this.productService.getProducts().subscribe({
+      next: (products: Product[]) => {  // Especificando el tipo explícitamente
+        this.products = products;
+        console.log('HomeComponent: Productos cargados:', products);
+        // Seleccionar 8 productos aleatorios
+        this.selectRandomProducts();
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.error('HomeComponent: Error loading products', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  // Método para seleccionar 8 productos aleatorios
+  selectRandomProducts(): void {
+    // Crear una copia del array original para no modificarlo
+    const productsCopy = [...this.products];
+    this.randomProducts = [];
+    
+    // Determinar cuántos productos seleccionar (8 o menos si no hay suficientes)
+    const numToSelect = Math.min(8, productsCopy.length);
+    
+    // Seleccionar productos aleatorios
+    for (let i = 0; i < numToSelect; i++) {
+      // Generar un índice aleatorio
+      const randomIndex = Math.floor(Math.random() * productsCopy.length);
+      // Añadir el producto al array de aleatorios
+      this.randomProducts.push(productsCopy[randomIndex]);
+      // Eliminar el producto seleccionado para no repetirlo
+      productsCopy.splice(randomIndex, 1);
     }
+    
+    console.log('HomeComponent: Productos aleatorios seleccionados:', this.randomProducts);
   }
 
-  // Método para cargar productos desde el servicio
-  // En home.component.ts
-loadProducts(): void {
-  this.productService.getProducts().subscribe({
-    next: (products) => {
-      this.products = products;
-      console.log('Productos cargados:', products); // Añade este log
-    },
-    error: (error) => console.error('Error loading products', error)
-  });
-}
-
-  // Método para cargar las imágenes del banner
-  // En una app real, esto podría venir de la API, pero aquí lo simulamos con rutas estáticas
-  loadBannerImages(): void {
-    this.bannerImages = [
-      'assets/images/banner/banner1.jpg',
-      'assets/images/banner/banner2.jpg'
-    ];
-  }
-
-  // Método para iniciar la rotación automática del banner
-  startBannerRotation(): void {
-    // Configuramos un temporizador que llama a nextBanner cada 5 segundos
-    this.bannerInterval = setInterval(() => {
-      this.nextBanner();
-    }, 5000);
-  }
-
-  // Método para mostrar la imagen anterior del banner
-  prevBanner(): void {
-    // Calculamos el nuevo índice: si estamos en la primera imagen, vamos a la última
-    // Si no, simplemente retrocedemos una posición
-    this.currentBannerIndex = 
-      (this.currentBannerIndex === 0) 
-      ? this.bannerImages.length - 1 
-      : this.currentBannerIndex - 1;
-  }
-
-  // Método para mostrar la siguiente imagen del banner
-  nextBanner(): void {
-    // Calculamos el nuevo índice: si estamos en la última imagen, volvemos a la primera
-    // Si no, avanzamos una posición
-    this.currentBannerIndex = 
-      (this.currentBannerIndex === this.bannerImages.length - 1) 
-      ? 0 
-      : this.currentBannerIndex + 1;
+  // Método para abrir el popup del producto
+  openProductPopup(product: Product): void {
+    // Llamar al servicio para seleccionar el producto
+    this.productService.selectProductForPopup(product);
   }
 }

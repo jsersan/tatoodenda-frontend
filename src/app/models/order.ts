@@ -1,9 +1,16 @@
+import { Product } from "./product";
+
+// Interfaz para pedidos
 export interface Order {
-  id?: number;
-  iduser: number;
+  id: number;
+  usuario_id: number;
   fecha: string;
+  estado: string;
   total: number;
-  lineas?: OrderLine[];
+  direccion_envio?: string;
+  metodo_pago?: string;
+  num_seguimiento?: string;
+  lineas: OrderLine[];
 }
 
 export interface OrderLine {
@@ -11,15 +18,17 @@ export interface OrderLine {
   idpedido: number;
   idprod: number;
   color: string;
-  cant: number;
-  nombre?: string; // Nombre del producto (para mostrar)
+  cantidad: number;
+  nombre: string; // Nombre del producto (para mostrar)
 }
 
 export interface CartItem {
   id: number;
-  nombre: string;
-  precio: number;
-  color: string;
+  producto: string;
   cantidad: number;
+  color?: string;
+  talla?: string;
+  precio: number;
+  nombre?: string;
   imagen: string;
 }

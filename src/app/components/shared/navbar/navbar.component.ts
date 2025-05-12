@@ -1,104 +1,218 @@
-// Importamos los decoradores y clases necesarias desde Angular
-import { Component, OnInit } from '@angular/core';
-// Importamos el Router para manejar la navegación programática
-import { Router } from '@angular/router';
-// Importamos los servicios que necesitamos
-
-import { AuthService } from 'src/app/services/auth.service';
-import { CartService } from 'src/app/services/cart.service';
-import { CategoryService } from 'src/app/services/category.service';
-
-// Importamos los modelos de datos que vamos a utilizar
-import { Category } from 'src/app/models/category';
-import { User } from 'src/app/models/user';
+import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import { CategoryService } from '../../../services/category.service'
+import { AuthService } from '../../../services/auth.service'
+import { CartService } from '../../../services/cart.service'
+import { Category } from '../../../models/category'
+import { User } from '../../../models/user'
 
 @Component({
-  // Selector que se usará para insertar este componente en otras plantillas
   selector: 'app-navbar',
-  // Ruta a la plantilla HTML
   templateUrl: './navbar.component.html',
-  // Ruta a los estilos específicos de este componente
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  // Array para almacenar las categorías de productos
-  categories: Category[] = [];
-  
-  // Variable para almacenar los datos del usuario actual, si está logueado
-  currentUser: User | null = null;
-  
-  // Variable para almacenar el término de búsqueda ingresado por el usuario
-  searchTerm: string = '';
-  
-  // Variable para almacenar el número de items en el carrito
-  cartItemCount: number = 0;
+  // Propiedades del componente
+  categories: Category[] = []
+  currentUser: User | null = null
+  searchTerm: string = ''
 
-  // Constructor con inyección de dependencias
-  constructor(
-    private categoryService: CategoryService,  // Para obtener las categorías
-    private authService: AuthService,         // Para manejar la autenticación
-    private cartService: CartService,         // Para interactuar con el carrito
-    public router: Router                    // Para la navegación programática
-  ) { }
+  constructor (
+    private categoryService: CategoryService,
+    private authService: AuthService,
+    public cartService: CartService,
+    public router: Router
+  ) {}
 
-  // Método del ciclo de vida que se ejecuta cuando se inicializa el componente
-  ngOnInit(): void {
-    // Cargar las categorías desde el backend
-    this.loadCategories();
+  ngOnInit (): void {
+    // Cargar categorías
+    this.loadCategories()
+
+    // Suscribirse a cambios en el usuario actual
+    this.authService.currentUser.subscribe(user => {
+      this.currentUser = user
+    })
+
+    // Asegurarse de que el carrito esté cerrado al inicio
+    setTimeout(() => {
+      if (this.cartService.isCartOpen) {
+        this.cartService.closeCart()
+      }
+
+      // También podemos cerrar el carrito manualmente si es necesario
+      const cartPopup = document.querySelector('.cart-popup') as HTMLElement
+      const cartOverlay = document.querySelector('.cart-overlay') as HTMLElement
+
+      if (cartPopup) cartPopup.classList.remove('active')
+      if (cartOverlay) cartOverlay.classList.remove('active')
+
+      document.body.style.overflow = 'auto'
+    }, 1)
+  }
+
+  // Método para obtener el ID de una subcategoría por su nombre
+  getSubcategoryId(name: string): number {
+    // Normalizar el nombre para la búsqueda (quitar acentos, convertir a mayúsculas)
+    const normalizedSearchName = name.toUpperCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
     
-    // Suscribirse al observable currentUser para detectar cambios en el estado de autenticación
-    this.authService.currentUser.subscribe({
-      next: (user) => this.currentUser = user
+    // Buscar la categoría con normalización también
+    const category = this.categories.find(cat => {
+      const normalizedCatName = cat.nombre.toUpperCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normalizedCatName === normalizedSearchName;
     });
     
-    // Suscribirse al observable cartItems para detectar cambios en el carrito
-    this.cartService.cartItems.subscribe({
-      next: (items) => this.cartItemCount = this.cartService.getCartItemCount()
-    });
+    // Depuración para identificar el problema
+    console.log(`Buscando categoría: "${name}" (normalizado: "${normalizedSearchName}")`);
+    if (category) {
+      console.log(`Categoría encontrada: ${category.nombre} (ID: ${category.id})`);
+    } else {
+      console.log('Categoría no encontrada. Categorías disponibles:', 
+        this.categories.map(c => `${c.nombre} (ID: ${c.id})`));
+    }
+    
+    return category ? category.id : 0;
+  }
+
+  // Método corregido para el navbar.component.ts
+  // En navbar.component.ts
+  toggleCartAndLog (): void {
+    console.log('Cart icon clicked')
+    // Alternativa a this.cartService.toggleCart()
+    if (this.cartService.isCartOpen) {
+      this.cartService.closeCart()
+    } else {
+      // Intenta acceder al método openCart
+      if (typeof this.cartService['openCart'] === 'function') {
+        ;(this.cartService as any).openCart()
+      } else {
+        console.warn(
+          'El método openCart no está disponible, usando alternativa'
+        )
+        // Activa las clases directamente
+        const cartPopup = document.querySelector('.cart-popup') as HTMLElement
+        const cartOverlay = document.querySelector(
+          '.cart-overlay'
+        ) as HTMLElement
+
+        if (cartPopup) cartPopup.classList.add('active')
+        if (cartOverlay) cartOverlay.classList.add('active')
+
+        // Y actualiza el estado si es posible
+        if (this.cartService['_isCartOpen']) {
+          this.cartService['_isCartOpen'].next(true)
+        }
+
+        document.body.style.overflow = 'hidden'
+      }
+    }
+    console.log('After toggle, cart is open:', !this.cartService.isCartOpen)
   }
 
   // Método para cargar las categorías desde el servicio
-  loadCategories(): void {
+  loadCategories (): void {
     this.categoryService.getCategories().subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        console.log('Categorías cargadas:', categories); // Añade este log
-        console.log('Categorías principales:', this.getMainCategories()); // Añade este log
+      next: categories => {
+        console.log('Categorías cargadas:', categories)
+        this.categories = categories
       },
-      error: (error) => console.error('Error loading categories', error)
-    });
-  }  
-
-  // Método para procesar la búsqueda cuando el usuario la envía
-  search(): void {
-    // Verificar que el término de búsqueda no esté vacío
-    if (this.searchTerm.trim()) {
-      // Navegar a la página de resultados de búsqueda con el término como parámetro
-      this.router.navigate(['/search'], { 
-        queryParams: { term: this.searchTerm } 
-      });
-    }
+      error: error => console.error('Error loading categories', error)
+    })
   }
 
-  // Método para cerrar sesión
-  logout(): void {
-    this.authService.logout();
+  // Método para obtener la categoría DILATACIONES
+  getDilatacionesCategory (): Category | undefined {
+    return this.categories.find(
+      category => category.nombre.toUpperCase() === 'DILATACIONES'
+    )
+  }
+
+  // Método para obtener la categoría PIERCINGS
+  getPiercingsCategory (): Category | undefined {
+    return this.categories.find(
+      category => category.nombre.toUpperCase() === 'PIERCINGS'
+    )
+  }
+
+  // Método para obtener las subcategorías de DILATACIONES
+  // Método para obtener las subcategorías de DILATACIONES
+  getSubcategoriesForDilataciones (): Category[] {
+    const dilataciones = this.getDilatacionesCategory()
+    if (!dilataciones) return []
+
+    // Filtrar categorías que tienen como padre la categoría DILATACIONES
+    // Y EXCLUIR cualquier subcategoría que se llame igual que la categoría padre
+    const subcategories = this.categories.filter(
+      category =>
+        category.padre === dilataciones.id &&
+        category.nombre.toUpperCase() !== 'DILATACIONES'
+    )
+
+    console.log('Subcategorías de DILATACIONES:', subcategories)
+    return subcategories
+  }
+
+  // Método para filtrar las subcategorías de DILATACIONES y evitar duplicados
+  getFilteredSubcategoriesForDilataciones (): Category[] {
+    const dilataciones = this.getDilatacionesCategory()
+    if (!dilataciones) return []
+
+    // Nombres de las subcategorías que ya tenemos listadas explícitamente
+    const excludedNames = ['EXPANDERS', 'PLUGS', 'TUNELES','TÚNELES']
+
+    // Filtrar para obtener solo las subcategorías que no están explícitamente listadas
+    return this.categories.filter(
+      category =>
+        category.padre === dilataciones.id &&
+        !excludedNames.includes(category.nombre.toUpperCase())
+    )
+  }
+
+  // Método para filtrar las subcategorías de PIERCINGS y evitar duplicados
+// Método para filtrar las subcategorías de PIERCINGS y evitar duplicados
+getFilteredSubcategoriesForPiercings(): Category[] {
+  const piercings = this.getPiercingsCategory();
+  if (!piercings) return [];
+  
+  // Nombres de las subcategorías que ya tenemos listadas explícitamente
+  const excludedNames = ['ANILLOS', 'BANANAS', 'BARBELLS', 'CIRCULAR BARBELLS', 'LABRETS'];
+  
+  // Filtrar para obtener solo las subcategorías que no están explícitamente listadas
+  return this.categories.filter(category => 
+    category.padre === piercings.id && 
+    !excludedNames.includes(category.nombre.toUpperCase())
+  );
+}
+
+  
+
+  // Método para navegar a una categoría
+  navigateToCategory (categoryId: number): void {
+    console.log(`Navegando a categoría ID: ${categoryId}`)
+    this.router.navigate(['/category', categoryId])
   }
 
   // Método para verificar si el usuario actual es administrador
-  isAdmin(): boolean {
-    return this.authService.isAdmin();
+  isAdmin (): boolean {
+    return this.currentUser?.role === 'admin'
   }
 
-  // Método para obtener solo las categorías principales (padre = id)
-  getMainCategories(): Category[] {
-    return this.categories.filter(cat => cat.id === cat.parent);
+  // Método para cerrar sesión
+  logout (): void {
+    this.authService.logout()
+    this.router.navigate(['/'])
   }
 
-  // Método para obtener subcategorías de una categoría principal
-  getSubcategories(categoryId: number): Category[] {
-    return this.categories.filter(cat => 
-      cat.parent === categoryId && cat.id !== cat.parent
-    );
+  // Método para realizar la búsqueda
+  search (): void {
+    if (this.searchTerm.trim()) {
+      this.router.navigate(['/search'], {
+        queryParams: { term: this.searchTerm }
+      })
+      this.searchTerm = '' // Limpiar después de buscar
+    }
   }
 }

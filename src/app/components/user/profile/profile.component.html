@@ -82,7 +82,7 @@
             <tr *ngFor="let linea of order.lineas" [style.display]="isOrderExpanded(order.id!) ? 'table-row' : 'none'">
               <td>{{ linea.nombre }}</td>
               <td>{{ linea.color }}</td>
-              <td>{{ linea.cant }}</td>
+              <td>{{ linea.cantidad }}</td>
             </tr>
           </ng-container>
           <!-- Fila de total (visible solo cuando está expandido) -->

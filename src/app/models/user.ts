@@ -7,5 +7,6 @@ export interface User {
   password?: string;
   direccion: string;
   ciudad: string;
+  role:string;
   cp: string;
 }

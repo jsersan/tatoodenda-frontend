@@ -1,59 +1,38 @@
-<!-- Banner rotativo que se muestra condicionalmente si hay imágenes -->
-<!-- La directiva *ngIf comprueba si el array tiene elementos antes de mostrar el div -->
-<div id="banner" *ngIf="bannerImages.length > 0">
-    <!-- Botón para ir a la imagen anterior del banner -->
-    <!-- El evento (click) ejecuta el método prevBanner() cuando se hace clic -->
-    <img 
-      src="assets/images/icons/left-arrow.png" 
-      id="bannerback" 
-      class="banner_button" 
-      (click)="prevBanner()" 
-    />
-    
-    <!-- Imagen actual del banner -->
-    <!-- [src] es un binding de propiedad que establece el atributo src dinámicamente -->
-    <!-- bannerImages[currentBannerIndex] selecciona la imagen actual según el índice -->
-    <img 
-      [src]="bannerImages[currentBannerIndex]" 
-      alt="banner" 
-      id="bannerimg" 
-    />
-    
-    <!-- Botón para ir a la siguiente imagen del banner -->
-    <img 
-      src="assets/images/icons/right-arrow.png" 
-      id="bannerforward" 
-      class="banner_button" 
-      (click)="nextBanner()" 
-    />
+<!-- El banner ahora es manejado por el componente app-banner -->
+
+<!-- Indicador de carga -->
+<div *ngIf="loading" class="loading-indicator">
+  <p>Cargando productos...</p>
+</div>
+
+<!-- Título de la sección en cursiva -->
+<div id="titulo" class="center-aligned-title">
+  <h1>novedades</h1>
+</div>
+
+<!-- Contenedor para la cuadrícula de productos aleatorios -->
+<div id="articulos" *ngIf="!loading">
+  <!-- Mensaje si no hay productos -->
+  <div *ngIf="randomProducts.length === 0" class="no-products">
+    <p>No se encontraron productos disponibles.</p>
   </div>
   
-  <!-- Título de la sección de productos -->
-  <div>
-    <h1 id="titulo">Novedades</h1>
+  <!-- Directiva *ngFor que itera sobre el array de productos aleatorios -->
+  <div class="articulo" *ngFor="let product of randomProducts" [routerLink]="['/product', product.id]">
+    <!-- Imagen del producto usando el servicio centralizado -->
+    <img [src]="productService.getProductImageSrc(product)" [alt]="product.nombre" 
+         (error)="productService.handleImageError($event)" />
+    
+    <!-- Nombre del producto -->
+    <h2>{{ product.nombre }}</h2>
+    
+    <!-- Precio del producto formateado como moneda -->
+    <h3>{{ product.precio | currency:'EUR':'symbol':'1.2-2' }}</h3>
+    
+    <!-- Descripción del producto -->
+    <p>{{ product.descripcion }}</p>
   </div>
-  
-  <!-- Contenedor para la cuadrícula de productos -->
-  <div id="articulos">
-    <!-- Directiva *ngFor que itera sobre el array de productos -->
-    <!-- Por cada producto en el array, crea un elemento div con la clase "articulo" -->
-    <!-- [routerLink] crea un enlace de navegación al detalle del producto usando su ID -->
-    <div class="articulo" *ngFor="let product of products" [routerLink]="['/product', product.id]">
-      <!-- Imagen del producto -->
-      <!-- [src] construye dinámicamente la ruta de la imagen combinando la carpeta y el nombre -->
-      <!-- [alt] establece el texto alternativo con el nombre del producto -->
-      <img [src]="'assets/images/' + product.carpetaimg + '/' + product.imagen" [alt]="product.nombre" />
-      
-      <!-- Nombre del producto -->
-      <!-- La sintaxis {{ }} es interpolación, muestra el valor de una propiedad -->
-      <h2>{{ product.nombre }}</h2>
-      
-      <!-- Precio del producto formateado como moneda -->
-      <!-- El pipe | currency formatea el número como moneda con el símbolo del euro -->
-      <!-- 'EUR':'symbol':'1.2-2' especifica usar el símbolo €, con mínimo 1 y máximo 2 decimales -->
-      <h3>{{ product.precio | currency:'EUR':'symbol':'1.2-2' }}</h3>
-      
-      <!-- Descripción del producto -->
-      <p>{{ product.descripcion }}</p>
-    </div>
-  </div>
+</div>
+
+<!-- Incluir el componente de popup de producto -->
+<app-product-popup></app-product-popup>

@@ -45,7 +45,7 @@
               <select id="nuevoartcat" formControlName="categoria">
                 <option value="" selected disabled hidden></option>
                 <option *ngFor="let category of categories" [value]="category.id">
-                  {{ category.name }}
+                  {{ category.nombre }}
                 </option>
               </select>
             </td>
@@ -124,7 +124,7 @@
             <td>
               <select formControlName="categoria">
                 <option *ngFor="let category of categories" [value]="category.id">
-                  {{ category.name }}
+                  {{ category.nombre }}
                 </option>
               </select>
             </td>
@@ -151,7 +151,7 @@
         <tr *ngFor="let product of products">
           <td>{{ product.nombre }}</td>
           <td>{{ formatPrice(product.precio) }}</td>
-          <td>{{ getCategoryName(product.categoria) }}</td>
+          <td>{{ product.categoria_id !== undefined ? getCategoryName(product.categoria_id) : 'Sin categoría' }}</td>
           <td>
             <input [attr.data-id]="product.id" type="button" class="editarart" value="EDITAR" (click)="editProduct(product)"/>
           </td>
