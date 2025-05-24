@@ -1,6 +1,6 @@
-// checkout.component.ts actualizado con currentUser
+// checkout.component.ts actualizado con funcionalidad de modal
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
@@ -13,9 +13,9 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
-  styleUrls: [] // Eliminar la referencia a checkout.component.css si no existe
+  styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   // Formulario para datos de envío
   checkoutForm: FormGroup;
   
@@ -33,7 +33,7 @@ export class CheckoutComponent implements OnInit {
   showDelivery: boolean = false;
   showPayment: boolean = false;
   
-  // Añadir propiedad currentUser para la plantilla
+  // Usuario actual para la plantilla
   currentUser: any;
   
   constructor(
@@ -54,6 +54,9 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Prevenir el scroll del body cuando el modal está abierto
+    document.body.style.overflow = 'hidden';
+    
     // Cargar los items del carrito
     this.cartService.cartItems.subscribe(items => {
       // Mapear los items del carrito para asegurar compatibilidad de tipos
@@ -74,7 +77,7 @@ export class CheckoutComponent implements OnInit {
       
       // Verificar si el carrito está vacío y redireccionar
       if (this.cartItems.length === 0) {
-        this.router.navigate(['/']);
+        this.closeCheckout();
       }
     });
     
@@ -87,13 +90,46 @@ export class CheckoutComponent implements OnInit {
         nombre: this.currentUser.nombre || '',
         direccion: this.currentUser.direccion || '',
         ciudad: this.currentUser.ciudad || '',
-        codigoPostal: this.currentUser.cp || '', // Nota: en la plantilla usas cp, no codigoPostal
+        codigoPostal: this.currentUser.cp || '',
         telefono: this.currentUser.telefono || ''
       });
     }
+    
+    // Listener para cerrar con tecla ESC
+    document.addEventListener('keydown', this.handleEscapeKey.bind(this));
   }
 
-  // Renombrar processOrder a placeOrder para que coincida con la plantilla
+  ngOnDestroy(): void {
+    // Restaurar el scroll del body al destruir el componente
+    document.body.style.overflow = 'auto';
+    
+    // Remover listener del ESC
+    document.removeEventListener('keydown', this.handleEscapeKey.bind(this));
+  }
+
+  /**
+   * Maneja la tecla ESC para cerrar el modal
+   */
+  private handleEscapeKey(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.closeCheckout();
+    }
+  }
+
+  /**
+   * Cierra el modal de checkout y navega de vuelta
+   */
+  closeCheckout(): void {
+    // Restaurar scroll del body
+    document.body.style.overflow = 'auto';
+    
+    // Navegar hacia atrás o a la página principal
+    this.router.navigate(['/']);
+  }
+
+  /**
+   * Procesa el pedido (método principal del checkout)
+   */
   placeOrder(): void {
     if (this.checkoutForm.invalid) {
       // Marcar todos los campos como tocados para mostrar errores
@@ -112,20 +148,20 @@ export class CheckoutComponent implements OnInit {
         idpedido: 0,
         idprod: item.id,
         color: item.color || '',
-        cantidad: item.cantidad, // Usar cantidad, no cant
+        cantidad: item.cantidad,
         nombre: item.nombre || ''
       };
     });
     
     // Crear el objeto de pedido
     const order: Order = {
-      id: 0, // Este valor lo asignará el backend
+      id: 0,
       usuario_id: this.currentUser?.id || 0,
       fecha: new Date().toISOString(),
       estado: 'pendiente',
       total: this.total,
-      direccion_envio: this.checkoutForm.value.direccion,
-      metodo_pago: 'Efectivo', // Valor por defecto o el que seleccione el usuario
+      direccion_envio: this.checkoutForm.value.direccion || this.currentUser.direccion,
+      metodo_pago: 'Efectivo',
       lineas: orderLines
     };
     
@@ -142,10 +178,12 @@ export class CheckoutComponent implements OnInit {
           title: '¡Pedido realizado con éxito!',
           text: `Tu número de pedido es: ${response.id}`,
           icon: 'success',
-          confirmButtonColor: '#52667a'
+          confirmButtonColor: '#52667a',
+          confirmButtonText: 'Aceptar'
         }).then(() => {
-          // Redirigir al usuario a su perfil o a la página de confirmación
-          this.router.navigate(['/perfil']);
+          // Cerrar modal y redirigir
+          this.closeCheckout();
+          this.router.navigate(['/profile']);
         });
       },
       error: (error) => {
@@ -156,7 +194,8 @@ export class CheckoutComponent implements OnInit {
           title: 'Error al procesar el pedido',
           text: error.message || 'Hubo un problema al procesar tu pedido. Por favor, inténtalo de nuevo.',
           icon: 'error',
-          confirmButtonColor: '#52667a'
+          confirmButtonColor: '#52667a',
+          confirmButtonText: 'Intentar de nuevo'
         });
       }
     });
@@ -193,12 +232,11 @@ export class CheckoutComponent implements OnInit {
     return item ? item.producto : '';
   }
   
-  // Navegar a diferentes secciones del checkout
+  // Navegar a diferentes secciones del checkout (si se implementan pasos)
   goToDelivery(): void {
     this.showOrder = false;
     this.showDelivery = true;
     this.showPayment = false;
-    window.scrollTo(0, 0);
   }
   
   goToPayment(): void {
@@ -213,14 +251,12 @@ export class CheckoutComponent implements OnInit {
     this.showOrder = false;
     this.showDelivery = false;
     this.showPayment = true;
-    window.scrollTo(0, 0);
   }
   
   goToOrder(): void {
     this.showOrder = true;
     this.showDelivery = false;
     this.showPayment = false;
-    window.scrollTo(0, 0);
   }
   
   // Gestionar errores de formulario

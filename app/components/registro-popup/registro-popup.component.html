@@ -1,0 +1,149 @@
+<!-- registro-popup.component.html -->
+<div class="registro-popup-overlay" 
+     [class.active]="isVisible" 
+     (click)="onOverlayClick($event)"
+     (keydown)="onKeyDown($event)"
+     tabindex="0"
+     *ngIf="isVisible">
+     
+  <div class="registro-popup-container">
+    <!-- Botón de cerrar -->
+    <button class="close-popup-btn" (click)="cerrarPopup()" type="button">×</button>
+    
+    <!-- Título del popup -->
+    <div class="registro-popup-header">
+      <h2 class="registro-title" style="font-family: 'Montserrat', Arial, sans-serif !important; font-style: normal !important; font-weight: 600 !important;">Registro</h2>
+    </div>
+    
+    <!-- Formulario de registro -->
+    <div class="registro-popup-content">
+      <form (ngSubmit)="registrarse()" #registroForm="ngForm">
+        <!-- Campo Usuario -->
+        <div class="form-group">
+          <label for="usuario">Usuario:</label>
+          <input 
+            type="text" 
+            id="usuario"
+            name="usuario"
+            [(ngModel)]="usuario"
+            placeholder="Introduce tu usuario"
+            required
+            autocomplete="username"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Contraseña -->
+        <div class="form-group">
+          <label for="contrasena">Contraseña:</label>
+          <input 
+            type="password" 
+            id="contrasena"
+            name="contrasena"
+            [(ngModel)]="contrasena"
+            placeholder="Introduce tu contraseña"
+            required
+            autocomplete="new-password"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Nombre Completo -->
+        <div class="form-group">
+          <label for="nombreCompleto">Nombre completo:</label>
+          <input 
+            type="text" 
+            id="nombreCompleto"
+            name="nombreCompleto"
+            [(ngModel)]="nombreCompleto"
+            placeholder="Tu nombre completo"
+            required
+            autocomplete="name"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Email -->
+        <div class="form-group">
+          <label for="email">E-mail:</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="tu@email.com"
+            required
+            autocomplete="email"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Dirección -->
+        <div class="form-group">
+          <label for="direccion">Dirección:</label>
+          <input 
+            type="text" 
+            id="direccion"
+            name="direccion"
+            [(ngModel)]="direccion"
+            placeholder="Tu dirección"
+            autocomplete="street-address"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Ciudad -->
+        <div class="form-group">
+          <label for="ciudad">Ciudad:</label>
+          <input 
+            type="text" 
+            id="ciudad"
+            name="ciudad"
+            [(ngModel)]="ciudad"
+            placeholder="Tu ciudad"
+            autocomplete="address-level2"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Campo Código Postal -->
+        <div class="form-group">
+          <label for="codigoPostal">Código Postal:</label>
+          <input 
+            type="text" 
+            id="codigoPostal"
+            name="codigoPostal"
+            [(ngModel)]="codigoPostal"
+            placeholder="12345"
+            autocomplete="postal-code"
+            [disabled]="isLoading">
+        </div>
+        
+        <!-- Mensaje de error -->
+        <div class="error-message" *ngIf="errorMessage">
+          <i class="error-icon">⚠️</i>
+          {{ errorMessage }}
+        </div>
+        
+        <!-- Mensaje de éxito -->
+        <div class="success-message" *ngIf="successMessage">
+          <i class="success-icon">✅</i>
+          {{ successMessage }}
+        </div>
+        
+        <!-- Botón de registro -->
+        <button 
+          type="submit" 
+          class="registro-btn"
+          [disabled]="isLoading || !usuario || !contrasena || !nombreCompleto || !email">
+          <span *ngIf="!isLoading">REGISTRARSE</span>
+          <span *ngIf="isLoading" class="loading-text">
+            <span class="spinner"></span>
+            Registrando...
+          </span>
+        </button>
+      </form>
+      
+      <!-- Enlace de login -->
+      <div class="login-link">
+        <p>¿Ya tienes cuenta? 
+          <a href="#" (click)="irALogin(); $event.preventDefault()">¡Inicia sesión!</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,382 @@
+/* checkout.component.scss */
+/* Estilos para convertir el checkout en una ventana popup modal elegante */
+
+/* Overlay del modal - fondo oscuro semitransparente */
+.checkout-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+  
+  /* Contenedor principal del modal */
+  .vercheckout {
+    background: white;
+    border-radius: 12px;
+    max-width: 900px !important;
+    width: 100% !important;
+    max-height: 90vh; /* Aumentado un poco */
+    min-height: 650px !important; /* Altura mínima mayor */
+    height: auto !important; /* Sobrescribir altura fija del styles.scss */
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+    /* Sobrescribir flex-direction si es necesario */
+    flex-direction: column !important;
+  }
+  
+  /* Animación de entrada del modal */
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Botón de cerrar */
+  .close-button {
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    color: #666 !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    transition: all 0.2s ease;
+    width: 35px !important;
+    height: 35px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    &:hover {
+      color: #333 !important;
+      background-color: rgba(0, 0, 0, 0.05) !important;
+      border-radius: 50% !important;
+    }
+  }
+  
+  /* Contenido del modal */
+  .modal-content {
+    padding: 30px 35px 20px; /* Reducido padding inferior */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 650px; /* Aumentado para más espacio interno */
+  }
+  
+  /* Sección del receptor (direcciones) */
+  #receptor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px; /* Reducido el gap */
+    margin-bottom: 10px; /* Reducido el margen inferior */
+    flex-shrink: 0; /* No se encoge */
+    
+    /* Títulos de sección */
+    h1 {
+      font-family: 'Dancing Script', cursive, serif;
+      font-size: 20px; /* Reducido */
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 8px 0; /* Reducido margen */
+      font-style: italic;
+    }
+    
+    /* Contenedor de datos */
+    .datos {
+      background-color: #f8f9fa;
+      padding: 12px; /* Reducido padding */
+      border-radius: 8px;
+      font-size: 12px; /* Reducido tamaño fuente */
+      line-height: 1.4; /* Reducido line-height */
+      color: #555;
+      
+      /* Efecto hover sutil */
+      &:hover {
+        background-color: #f1f3f4;
+        transition: background-color 0.2s ease;
+      }
+    }
+  }
+  
+  /* Sección de productos que ocupa el espacio flexible */
+  .productos-section {
+    flex: 1; /* Ocupa el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Permite que se encoja si es necesario */
+  }
+  
+  /* Título de productos */
+  .productos-title {
+    font-family: 'Dancing Script', cursive, serif !important;
+    font-size: 22px !important; /* Reducido */
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin: 8px 0 10px 0 !important; /* Reducido márgenes */
+    font-style: italic !important;
+    text-align: left !important;
+    flex-shrink: 0 !important; /* No se encoge */
+    border: none !important; /* Sobrescribir cualquier borde del styles.scss */
+    text-transform: none !important; /* Sobrescribir text-transform */
+    letter-spacing: normal !important;
+    line-height: normal !important;
+  }
+  
+  /* Tabla de productos */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 0px !important; /* Sin margen inferior */
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    flex: 1 !important; /* Ocupa todo el espacio disponible de la sección */
+    min-height: 400px !important; /* Altura mínima para permitir más filas */
+    text-align: center !important;
+    
+    /* Encabezado */
+    thead {
+      display: table-header-group !important; /* Sobrescribir display: block */
+      
+      th {
+        background-color: #52667a;
+        color: white;
+        padding: 6px 8px; /* Reducido aún más */
+        text-align: center !important;
+        font-weight: 600;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        
+        &:first-child {
+          border-top-left-radius: 8px;
+        }
+        &:last-child {
+          border-top-right-radius: 8px;
+        }
+      }
+    }
+    
+    /* Cuerpo de la tabla */
+    tbody {
+      display: table-row-group !important; /* Sobrescribir display: block */
+      max-height: none !important; /* Eliminar restricción de altura */
+      overflow: visible !important; /* Eliminar scroll forzado */
+      
+      tr {
+        border-bottom: 1px solid #e9ecef;
+        transition: background-color 0.2s ease;
+        height: 45px; /* Altura óptima para las filas */
+        display: table-row !important;
+        
+        &:hover {
+          background-color: #f8f9fa;
+        }
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+      
+      td {
+        padding: 12px 8px; /* Padding balanceado */
+        vertical-align: middle;
+        font-size: 13px;
+        color: #555;
+        display: table-cell !important;
+        
+        &:last-child {
+          font-weight: 600;
+          color: #52667a;
+        }
+      }
+    }
+    
+    /* Pie de tabla (total) */
+    tfoot {
+      display: table-footer-group !important; /* Sobrescribir display: block */
+      
+      tr {
+        background-color: #f8f9fa;
+        border-top: 2px solid #52667a;
+        height: 45px; /* Consistente con las filas */
+        display: table-row !important;
+      }
+      
+      td {
+        padding: 12px 8px; /* Padding consistente */
+        font-weight: 700;
+        font-size: 14px;
+        color: #333;
+        display: table-cell !important;
+        
+        /* Sobrescribir anchos fijos del styles.scss */
+        &:first-child {
+          width: auto !important;
+          text-align: right !important;
+        }
+        
+        &:last-child {
+          color: #52667a;
+          font-size: 16px;
+          width: auto !important;
+          text-align: right !important;
+          padding-right: 8px !important;
+        }
+      }
+    }
+  }
+  
+  /* Contenedor del botón para asegurar centrado */
+  .button-container {
+    width: 100%;
+    text-align: center;
+    margin-top: auto; /* Empuja el botón hacia abajo */
+    padding: 20px 0; /* Espaciado del borde inferior */
+    clear: both;
+    flex-shrink: 0; /* No se encoge */
+  }
+  
+  /* Botón de comprar */
+  #comprar {
+    background: linear-gradient(135deg, #52667a 0%, #6c7a8a 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 25px !important; /* Más compacto */
+    font-size: 13px !important; /* Más pequeño */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(82, 102, 122, 0.3);
+    display: inline-block !important;
+    margin: 0 !important;
+    width: auto !important; /* Sobrescribir ancho fijo */
+    min-width: 110px !important; /* Más estrecho */
+    max-width: 130px;
+    text-align: center;
+    position: relative !important; /* Sobrescribir position absolute */
+    bottom: auto !important;
+    left: auto !important;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(82, 102, 122, 0.4);
+      background: linear-gradient(135deg, #5d758a 0%, #7a8a9a 100%);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(82, 102, 122, 0.3);
+    }
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .checkout-overlay {
+      padding: 10px;
+    }
+    
+    .vercheckout {
+      max-height: 95vh;
+      margin: 10px;
+      border-radius: 8px;
+    }
+    
+    .modal-content {
+      padding: 25px 20px 20px;
+    }
+    
+    #receptor {
+      grid-template-columns: 1fr;
+      gap: 25px;
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      .datos {
+        padding: 15px;
+        font-size: 13px;
+      }
+    }
+    
+    .productos-title {
+      font-size: 22px;
+      text-align: center;
+    }
+    
+    table {
+      font-size: 12px;
+      
+      thead th {
+        padding: 12px 8px;
+        font-size: 11px;
+      }
+      
+      tbody td {
+        padding: 12px 8px;
+        font-size: 12px;
+      }
+      
+      tfoot td {
+        padding: 15px 8px;
+        font-size: 14px;
+        
+        &:last-child {
+          font-size: 16px;
+        }
+      }
+    }
+    
+    #comprar {
+      padding: 12px 30px;
+      font-size: 14px;
+      min-width: 150px;
+    }
+  }
+  
+  /* Scrollbar personalizado para el modal */
+  .vercheckout::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .vercheckout::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  .vercheckout::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+  
+  /* Asegurar que el modal esté por encima de todo */
+  .checkout-overlay {
+    z-index: 10000 !important; /* Mayor que cualquier z-index del styles.scss */
+  }

@@ -29,6 +29,8 @@ import { OrderLineComponent } from './components/orderline/orderline.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { HeaderComponent } from './components/shared/header/header.component';
 import { ImageUrlPipe } from './pipes/image-url.pipe';
+import { LoginPopupComponent } from './components/login-popup/login-popup.component';
+import { RegistroPopupComponent } from './components/registro-popup/registro-popup.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { ImageUrlPipe } from './pipes/image-url.pipe';
     ProfileComponent,
     OrderLineComponent,
     BannerComponent,
-    HeaderComponent
+    HeaderComponent,
+    LoginPopupComponent,
+    RegistroPopupComponent
   ],
   imports: [
     BrowserModule,

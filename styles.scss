@@ -9,15 +9,12 @@
    7. Grid de Artículos
    8. Visualización de Artículo
    9. Popup de Producto
-   10. Visualización del Carrito
-   11. Login y Registro
-   12. Checkout
-   13. Perfil de Usuario
-   14. Admin
-   15. Modales y Utilitarios
-   16. Footer
-   17. Animaciones
-   18. Responsive
+   10. Perfil de Usuario
+   11. Admin
+   12. Modales y Utilitarios Generales
+   13. Footer
+   14. Animaciones
+   15. Responsive
    ========================================================================== */
 
 /* ==========================================================================
@@ -375,23 +372,6 @@
      }
    }
    
-   /* Botón de cierre */
-   .close-button, 
-   .popup-close, 
-   .modal-close, 
-   .close-product {
-     position: absolute !important;
-     top: 15px !important;
-     right: 15px !important;
-     font-size: 24px !important;
-     background: none !important;
-     border: none !important;
-     cursor: pointer !important;
-     z-index: 1 !important;
-     padding: 5px !important;
-     line-height: 1 !important;
-   }
-   
    /* Contenido del producto */
    .product-content {
      display: flex;
@@ -513,366 +493,7 @@
    }
    
    /* ==========================================================================
-      10. Visualización del Carrito
-      ========================================================================== */
-   /* Popup del carrito */
-   .cart-popup {
-     position: fixed !important;
-     top: 50% !important;
-     left: 50% !important;
-     transform: translate(-50%, -50%) !important;
-     background-color: white !important;
-     z-index: 9999 !important;
-     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) !important;
-     padding: 25px !important;
-     width: 80% !important;
-     max-width: 800px !important;
-     max-height: 80vh !important;
-     overflow-y: auto !important;
-     display: none !important;
-     
-     &.active {
-       display: block !important;
-     }
-   }
-   
-   .cart-overlay {
-     position: fixed !important;
-     top: 0 !important;
-     left: 0 !important;
-     right: 0 !important;
-     bottom: 0 !important;
-     background-color: rgba(0, 0, 0, 0.5) !important;
-     z-index: 9998 !important;
-     display: none !important;
-     
-     &.active {
-       display: block !important;
-     }
-   }
-   
-   /* Tabla del carrito */
-   .vercarrito {
-     width: 80%;
-     height: 60%;
-     top: 15%;
-     flex-direction: column;
-     justify-content: space-between;
-     
-     table {
-       width: 95%;
-       max-height: 80%;
-       text-align: center;
-       border-collapse: collapse;
-       margin: 0 auto;
-       display: block;
-       height: 80%;
-       
-       img {
-         vertical-align: middle;
-       }
-       
-       thead {
-         tr {
-           :nth-child(1) {
-             width: 39.5%;
-           }
-           :nth-child(2) {
-             width: 20%;
-           }
-           :nth-child(3) {
-             width: 15%;
-           }
-           :nth-child(4), :nth-child(5) {
-             width: 15%;
-           }
-           :nth-child(5) span {
-             position: relative;
-             left: 20px;
-           }
-         }
-       }
-       
-       tbody {
-         overflow-y: auto;
-         overflow-x: hidden;
-         display: block;
-         max-height: 85%;
-         
-         tr {
-           :nth-child(1) {
-             width: 35%;
-             img {
-               width: 25px;
-             }
-           }
-           :nth-child(2) {
-             width: 20%;
-           }
-           :nth-child(3), :nth-child(4), :nth-child(5) {
-             width: 15%;
-           }
-         }
-       }
-       
-       tfoot tr {
-         td {
-           padding-top: 20px;
-         }
-         td:first-of-type {
-           font-weight: bold;
-           font-size: 1.2em;
-           text-align: right;
-           width: 88%;
-         }
-         :nth-child(2) {
-           width: 15%;
-           text-align: left;
-           padding-left: 25px;
-         }
-         :nth-child(3) {
-           width: 10%;
-         }
-       }
-       
-       tr td:nth-child(1) {
-         text-align: left;
-       }
-       
-       tr td {
-         padding: 0 15px;
-       }
-       
-       tr th {
-         padding: 15px 0;
-       }
-       
-       b {
-         text-align: right;
-       }
-     }
-     
-     #procesarcompra {
-       width: 180px;
-       margin: 0 auto;
-       padding: 15px;
-       background-color: $primary;
-       color: white;
-       border: none;
-       border-radius: 0 0 6px 6px;
-       font-weight: bold;
-       cursor: pointer;
-       text-transform: uppercase;
-       letter-spacing: 0.5px;
-       flex-shrink: 0;
-       
-       &:hover {
-         background-color: darken($primary, 10%);
-       }
-     }
-     
-     .eliminar {
-       cursor: pointer;
-     }
-   }
-   
-   /* Encabezado del carrito */
-   .cart-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     padding: 15px 20px;
-     border-bottom: 1px solid #eaeaea;
-     background-color: white;
-     flex-shrink: 0;
-     
-     h2 {
-       margin: 0;
-       font-size: 18px;
-       font-weight: 500;
-     }
-     
-     .close-cart {
-       background: none;
-       border: none;
-       font-size: 24px;
-       cursor: pointer;
-       padding: 0;
-       line-height: 1;
-     }
-   }
-   
-   /* Contenido del carrito */
-   .cart-content {
-     flex: 1;
-     overflow-y: auto;
-     display: flex;
-     flex-direction: column;
-   }
-   
-   /* Mensaje de carrito vacío */
-   .empty-cart {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: center;
-     text-align: center;
-     padding: 40px 20px;
-     min-height: 200px;
-     
-     h2 {
-       margin-bottom: 10px;
-     }
-     
-     p {
-       margin-bottom: 20px;
-       color: #666;
-     }
-     
-     button {
-       padding: 10px 20px;
-       background-color: $primary;
-       color: white;
-       border: none;
-       border-radius: 4px;
-       cursor: pointer;
-       
-       &:hover {
-         background-color: darken($primary, 10%);
-       }
-     }
-   }
-   
-   /* ==========================================================================
-      11. Login y Registro
-      ========================================================================== */
-   .verlogin {
-     width: 300px;
-     height: 220px;
-     position: fixed;
-     top: 250px;
-     padding-bottom: 20px !important;
-     flex-direction: column;
-     
-     h1 {
-       text-align: center;
-       margin-bottom: 10px !important;
-     }
-     
-     input[type='submit'] {
-       padding: 5px;
-       width: 150px;
-       margin: 15px auto 0;
-     }
-   }
-   
-   .verregistro {
-     flex-direction: column;
-     width: 530px;
-     height: 330px;
-     
-     h1 {
-       text-align: center;
-       margin-bottom: 15px !important;
-     }
-     
-     table tr td:first-of-type {
-       text-align: right;
-     }
-     
-     input[type='submit'] {
-       padding: 10px 0;
-       width: 150px;
-       margin: 30px auto 0;
-     }
-   }
-   
-   /* ==========================================================================
-      12. Checkout
-      ========================================================================== */
-   .vercheckout {
-     flex-direction: column;
-     width: 800px;
-     height: 400px;
-     
-     table {
-       text-align: center;
-       border-collapse: collapse;
-       
-       thead, tbody, tfoot {
-         display: block;
-       }
-       
-       thead {
-         td:first-of-type {
-           text-align: left;
-           padding-left: 20px;
-         }
-       }
-       
-       tbody {
-         max-height: 88px;
-         overflow-y: auto;
-         overflow-x: hidden;
-       }
-       
-       tfoot {
-         tr {
-           :first-child {
-             width: 670px;
-             text-align: right;
-             font-weight: bold;
-           }
-           :last-child {
-             width: 120px;
-             text-align: right;
-             padding-right: 37px
-           }
-         }
-       }
-       
-       tr {
-         :nth-child(1) {
-           width: 250px;
-           text-align: left;
-           padding-left: 20px;
-         }
-         :nth-child(2) {
-           width: 175px;
-         }
-         :nth-child(3) {
-           width: 125px;
-         }
-         th {
-           padding-bottom: 10px;
-           text-align: center !important;
-         }
-         :nth-child(4), :nth-child(5) {
-           text-align: right !important;
-           width: 125px;
-           padding-right: 20px;
-         }
-       }
-     }
-     
-     #receptor {
-       display: flex;
-       justify-content: space-around;
-       .datos {
-         padding-left: 40px;
-       }
-     }
-     
-     #comprar {
-       position: absolute;
-       bottom: 40px;
-       left: 380px;
-       width: 120px;
-     }
-   }
-   
-   /* ==========================================================================
-      13. Perfil de Usuario
+      10. Perfil de Usuario
       ========================================================================== */
    #divdatos {
      table {
@@ -1001,7 +622,7 @@
    }
    
    /* ==========================================================================
-      14. Admin
+      11. Admin
       ========================================================================== */
    #divadmin {
      input[type='button'], input[type='submit'] {
@@ -1099,8 +720,25 @@
    }
    
    /* ==========================================================================
-      15. Modales y Utilitarios
+      12. Modales y Utilitarios Generales
       ========================================================================== */
+   /* Botones de cierre generales */
+   .close-button, 
+   .popup-close, 
+   .modal-close, 
+   .close-product {
+     position: absolute !important;
+     top: 15px !important;
+     right: 15px !important;
+     font-size: 24px !important;
+     background: none !important;
+     border: none !important;
+     cursor: pointer !important;
+     z-index: 1 !important;
+     padding: 5px !important;
+     line-height: 1 !important;
+   }
+   
    #cerrar {
      border: none;
      background-color: transparent;
@@ -1151,7 +789,7 @@
    }
    
    /* ==========================================================================
-      16. Footer
+      13. Footer
       ========================================================================== */
    footer {
      background-color: rgb(86, 79, 79);
@@ -1166,7 +804,7 @@
    }
    
    /* ==========================================================================
-      17. Animaciones
+      14. Animaciones
       ========================================================================== */
    @keyframes fadeIn {
      from {
@@ -1189,7 +827,7 @@
    }
    
    /* ==========================================================================
-   18. Responsive
+   15. Responsive
    ========================================================================== */
 @media (max-width: 768px) {
   #articulos .articulo {
@@ -1251,48 +889,6 @@
   .product-popup {
     width: 90%;
     padding: 15px;
-  }
-  
-  /* Ajustes para la visualización del carrito */
-  .vercarrito {
-    width: 95%;
-    
-    table {
-      width: 100%;
-      
-      tbody tr {
-        :nth-child(1) {
-          width: 30%;
-        }
-      }
-    }
-  }
-  
-  /* Ajustes para checkout */
-  .vercheckout {
-    width: 95%;
-    height: auto;
-    
-    #receptor {
-      flex-direction: column;
-      
-      .datos {
-        padding-left: 0;
-        margin-top: 20px;
-      }
-    }
-    
-    #comprar {
-      position: relative;
-      bottom: auto;
-      left: auto;
-      margin: 20px auto;
-    }
-  }
-  
-  /* Ajustes para login y registro */
-  .verlogin, .verregistro {
-    width: 90%;
   }
   
   /* Ajustes para perfil de usuario */
