@@ -40,7 +40,14 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "sweetalert2"
+              "sweetalert2",
+              "canvg",
+              "core-js",
+              "raf",
+              "rgbcolor",
+              "jspdf",
+              "dompurify",
+              "html2canvas"
             ],
             "outputPath": "dist/tatoodenda",
             "index": "src/index.html",

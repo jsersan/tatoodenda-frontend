@@ -1,17 +1,20 @@
-import { Component, OnInit, HostListener, NgZone, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, NgZone, OnDestroy, AfterViewInit, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { LoginPopupService } from '../../services/login-popup.service';
 import { OrderLine } from 'src/app/models/order';
 import { CartItem } from '../../services/cart.service';
+import { ProductService } from '../../services/product.service';
 import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: []
+  styleUrls: ['./cart.component.scss']
 })
-export class CartComponent implements OnInit, OnDestroy {
+export class CartComponent implements OnInit, OnDestroy, AfterViewInit {
   // Array para almacenar los items del carrito
   cartItems: CartItem[] = [];
   
@@ -24,67 +27,281 @@ export class CartComponent implements OnInit, OnDestroy {
   // Variable para controlar si estamos en proceso de eliminar
   private isRemoving: boolean = false;
   
+  // Suscripciones para limpiar en la destrucción
+  private cartSubscription: Subscription | null = null;
+  private cartVisibilitySubscription: Subscription | null = null;
+  
   // Constructor con inyección de dependencias
   constructor(
-    public cartService: CartService,  // Para acceder al servicio del carrito
-    private authService: AuthService,  // Para verificar si el usuario está autenticado
-    private router: Router,            // Para la navegación programática
-    private zone: NgZone              // Para ejecutar código fuera de la zona de Angular
+    public cartService: CartService,
+    private authService: AuthService,
+    private router: Router,
+    private zone: NgZone,
+    public productService: ProductService,
+    private renderer: Renderer2,
+    private loginPopupService: LoginPopupService
   ) { }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
-
+  
   ngOnInit(): void {
+    console.log('CartComponent: iniciando...');
+    
+    // Añadir globalmente un script para interceptar las modificaciones del DOM
+    this.addDOMObserver();
+    
     // Suscripción al observable de items del carrito
-    this.cartService.cartItems.subscribe({
+    this.cartSubscription = this.cartService.cartItems.subscribe({
       next: (items) => {
-        // Actualizar los items del carrito en el componente
-
-        this.cartService.cartItems.subscribe({
-          next: (items) => {
-            // Aquí puedes mapear los items para asegurarte que tienen la estructura correcta
-            this.cartItems = items.map(item => {
-              return {
-                id: item.id,
-                nombre: item.nombre || (item.producto ? item.producto.nombre : ''),
-                imagen: item.imagen || (item.producto ? `assets/images/${item.producto.carpetaimg}/${item.producto.imagen}` : ''),
-                color: item.color || '',
-                cantidad: item.cantidad,
-                precio: item.precio,
-                producto: item.producto
-              };
-            });
-            // Convertir CartItems a OrderLines para usar con OrderLineComponent
+        console.log('CartComponent: items del carrito actualizados', items.length);
+        // Mapear los items
+        this.cartItems = items.map(item => {
+          return {
+            id: item.id,
+            nombre: item.nombre || (item.producto ? item.producto.nombre : ''),
+            imagen: item.imagen || (item.producto ? `assets/images/${item.producto.carpetaimg}/${item.producto.imagen}` : ''),
+            color: item.color || '',
+            cantidad: item.cantidad,
+            precio: item.precio,
+            producto: item.producto
+          };
+        });
+        
+        // Convertir CartItems a OrderLines para usar con OrderLineComponent
         this.convertCartItemsToOrderLines();
         
         // Calcular el total del carrito
-        this.total = this.cartService.getCartTotal();
+        this.total = Math.round(this.cartService.getCartTotal() * 100) / 100;
         
-        // Si el carrito está vacío y estaba abierto, cerrarlo después de un breve retraso
-        // Solo si no estábamos en medio de otra operación de eliminación
+        // IMPORTANTE: Solo cerrar el carrito si está vacío y NO estamos en proceso de eliminar
         if (items.length === 0 && this.cartService.isCartOpen && !this.isRemoving) {
+          console.log('CartComponent: Carrito vacío, programando cierre en 500ms');
           setTimeout(() => {
             this.closeCart();
           }, 500);
         }
         
-        // Reset de la bandera de eliminar
-        this.isRemoving = false;
-          }
-        });
+        // Resetear isRemoving SOLO si el carrito está completamente vacío
+        if (items.length === 0) {
+          console.log('CartComponent: Carrito vacío, reseteando isRemoving');
+          this.isRemoving = false;
+        }
+        
+        // Fijar los precios después de cada actualización
+        setTimeout(() => {
+          this.fixPriceFormat();
+        }, 100);
       }
     });
     
-    // Detectar pulsación de tecla Escape para cerrar el carrito
-    this.setupEscapeListener();
-    
-    // Configurar el container de SweetAlert2 para asegurar que esté por encima del carrito
-    this.configureSweetAlert();
+    // Añadir listener explícito para cambios en la visibilidad del carrito
+    this.listenToCartVisibilityChanges();
     
     // Sobrescribir el método closeCart del servicio para evitar cierres no deseados
     this.patchCartServiceCloseMethod();
+    
+    // Aumentar el tamaño de los elementos del carrito en 5px
+    this.enhanceCartSize();
   }
+  
+  // Método para interceptar cambios en el DOM y corregir los precios
+  private addDOMObserver(): void {
+    const script = this.renderer.createElement('script');
+    
+    // Script para interceptar y corregir cambios en el DOM
+    script.text = `
+      (function() {
+        // Función para corregir formato de precios
+        function fixPriceFormat() {
+          // 1. Corregir el total principal
+          const totalElement = document.querySelector('[data-label="Total:"] + span');
+          if (totalElement) {
+            const rawTotal = parseFloat(totalElement.textContent.replace('€', '').trim());
+            if (!isNaN(rawTotal)) {
+              totalElement.textContent = rawTotal.toFixed(2) + '€';
+            }
+          }
+          
+          // 2. Corregir todos los precios totales por línea
+          const itemTotals = document.querySelectorAll('[data-label="PRECIO (TOTAL)"]');
+          itemTotals.forEach(element => {
+            if (element && element.textContent) {
+              const text = element.textContent.trim();
+              const rawValue = parseFloat(text.replace('€', '').trim());
+              if (!isNaN(rawValue)) {
+                element.textContent = rawValue.toFixed(2) + '€';
+              }
+            }
+          });
+        }
+        
+        // Observar cambios en el DOM
+        const observer = new MutationObserver(function(mutations) {
+          fixPriceFormat();
+        });
+        
+        // Configurar el observador
+        observer.observe(document.body, { 
+          childList: true, 
+          subtree: true,
+          characterData: true,
+          attributes: true
+        });
+        
+        // Ejecutar inmediatamente
+        fixPriceFormat();
+        
+        // Añadir a window para acceso desde el componente
+        window.fixPriceFormat = fixPriceFormat;
+      })();
+    `;
+    
+    // Añadir el script al DOM
+    this.renderer.appendChild(document.head, script);
+  }
+  
+  // Método simple para corregir el formato de precios
+  private fixPriceFormat(): void {
+    setTimeout(() => {
+      try {
+        // 1. Corregir el total principal
+        const totalElement = document.querySelector('[data-label="Total:"] + span');
+        if (totalElement) {
+          const rawValue = parseFloat(this.total.toString());
+          if (!isNaN(rawValue)) {
+            totalElement.textContent = rawValue.toFixed(2) + '€';
+          }
+        }
+        
+        // 2. Corregir los precios por línea
+        const itemTotals = document.querySelectorAll('[data-label="PRECIO (TOTAL)"]');
+        itemTotals.forEach(element => {
+          if (element && element.textContent) {
+            const text = element.textContent.trim();
+            const rawValue = parseFloat(text.replace('€', '').trim());
+            if (!isNaN(rawValue)) {
+              element.textContent = rawValue.toFixed(2) + '€';
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error al corregir precios:', error);
+      }
+    }, 0);
+  }
+
+  // Método para continuar comprando
+  continuarComprando(): void {
+    this.closeCart();
+    this.router.navigate(['/productos']);
+  }
+  
+  // Método para aumentar el tamaño del carrito y añadir animaciones
+  private enhanceCartSize(): void {
+    console.log('CartComponent: Aumentando tamaño de elementos del carrito y añadiendo animaciones');
+    
+    const styleEl = this.renderer.createElement('style');
+    styleEl.id = 'cart-size-enhancement';
+    
+    // Estilos para hacer elementos más grandes y añadir animación hover
+    styleEl.innerHTML = `
+      /* Ajustes al popup principal */
+      .cart-popup {
+        padding: 30px !important;
+        max-width: 1005px !important;
+      }
+      
+      /* Aumentar tamaño de elementos de la tabla */
+      .cart-table th, 
+      .cart-table td,
+      .cart-popup th,
+      .cart-popup td {
+        padding: 17px 15px !important;
+      }
+      
+      /* Aumentar las imágenes y añadir la animación de hover */
+      .cart-table .articulo-cell img,
+      .cart-popup img {
+        width: 45px !important;
+        height: 45px !important;
+        transition: transform 0.3s ease !important;
+      }
+      
+      /* Efecto hover para las imágenes */
+      .cart-table .articulo-cell img:hover,
+      .cart-popup img:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
+      }
+      
+      /* También aplicamos el efecto a las imágenes de productos en la galería */
+      #articulos .articulo img,
+      [class*='product'] img {
+        transition: transform 0.3s ease !important;
+      }
+      
+      #articulos .articulo img:hover,
+      [class*='product'] img:hover {
+        transform: scale(1.05) !important;
+        z-index: 1 !important;
+      }
+    `;
+    
+    // Añadir los nuevos estilos al head del documento
+    this.renderer.appendChild(document.head, styleEl);
+  }
+  
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.fixPriceFormat();
+    }, 100);
+  }
+  
+  ngOnDestroy(): void {
+    // Limpiar suscripciones para evitar memory leaks
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
+    
+    if (this.cartVisibilitySubscription) {
+      this.cartVisibilitySubscription.unsubscribe();
+    }
+    
+    // Eliminar event listeners si los hubiera
+    document.removeEventListener('click', this.handleOutsideClick);
+    
+    // Eliminar estilos personalizados
+    const customStyles = document.getElementById('cart-size-enhancement');
+    if (customStyles) {
+      customStyles.remove();
+    }
+  }
+  
+  // Método para suscribirse explícitamente a los cambios de visibilidad del carrito
+  private listenToCartVisibilityChanges(): void {
+    this.cartVisibilitySubscription = this.cartService.isCartOpenObservable.subscribe(isOpen => {
+      console.log('CartComponent: cambio de visibilidad del carrito', isOpen);
+      
+      if (isOpen) {
+        setTimeout(() => {
+          this.fixPriceFormat();
+        }, 200);
+      }
+    });
+  }
+  
+  // Manejador para clicks fuera del carrito
+  private handleOutsideClick = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    
+    // No cerrar si el clic fue dentro del carrito o si estamos eliminando
+    if (target.closest('.cart-popup') || target.closest('#carrito') || this.isRemoving) {
+      return;
+    }
+    
+    // Cerrar solo si el clic fue realmente fuera del carrito
+    if (this.cartService.isCartOpen) {
+      this.closeCart();
+    }
+  };
   
   // Método para parchar el comportamiento de cierre del servicio
   private patchCartServiceCloseMethod(): void {
@@ -93,29 +310,15 @@ export class CartComponent implements OnInit, OnDestroy {
     
     // Sobrescribir el método en el servicio
     this.cartService.closeCart = () => {
-      // Solo permitir el cierre si no estamos en proceso de eliminación
-      // O si el carrito está vacío
-      if (!this.isRemoving || this.cartItems.length === 0) {
-        originalCloseMethod.call(this.cartService);
-      } else {
+      // LÓGICA MEJORADA: No cerrar si estamos eliminando Y hay productos
+      if (this.isRemoving && this.cartItems.length > 0) {
         console.log('Cierre de carrito bloqueado durante eliminación de producto');
+        return; // Bloquear el cierre completamente
       }
+      
+      // En cualquier otro caso, permitir cerrar el carrito
+      originalCloseMethod.call(this.cartService);
     };
-  }
-  
-  // Configurar SweetAlert2 para que sus elementos estén por encima del carrito
-  private configureSweetAlert(): void {
-    // Crear un estilo en la cabecera del documento para sobrescribir el z-index de SweetAlert2
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = `
-      .swal2-container {
-        z-index: 9999 !important;
-      }
-      .swal2-popup {
-        z-index: 10000 !important;
-      }
-    `;
-    document.head.appendChild(styleEl);
   }
   
   // Método para convertir CartItems a OrderLines
@@ -132,58 +335,82 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
   
-  // Escuchar el evento keydown para cerrar con Escape
-  @HostListener('document:keydown.escape', ['$event'])
-  handleEscapeKey(event: KeyboardEvent): void {
-    if (this.cartService.isCartOpen && !this.isRemoving) {
-      this.closeCart();
-    }
-  }
-
   // Método para cerrar el popup del carrito
   closeCart(): void {
     // Solo permitir cierre manual si no estamos en proceso de eliminación
-    if (!this.isRemoving) {
+    // O si el carrito está vacío
+    if (!this.isRemoving || this.cartItems.length === 0) {
       this.cartService.closeCart();
+    } else {
+      console.log('CartComponent: Cierre manual bloqueado durante eliminación');
     }
   }
   
-  // Configurar listener para cerrar al hacer clic fuera del carrito
-  setupEscapeListener(): void {
-    document.addEventListener('click', (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (this.cartService.isCartOpen && 
-          !target.closest('.cart-popup') && 
-          !target.closest('#carrito') &&
-          !this.isRemoving) {
-        this.closeCart();
-      }
-    });
+  // Método para cerrar el popup del carrito (para template)
+  cerrarCarrito(): void {
+    this.closeCart();
   }
 
-  // Método para cambiar cantidad evitando la propagación del evento
-  changeQuantity(event: Event, id: number, color: string | undefined, newQuantity: number): void {
-    // Detener propagación del evento para evitar que se cierre el carrito
-    event.preventDefault();
-    event.stopPropagation();
+  // Método para obtener la ruta de la imagen del producto
+  getImageSrc(item: CartItem): string {
+    // Si el item tiene un objeto producto, usar productService para obtener la imagen
+    if (item.producto) {
+      return this.productService.getProductImageSrc(item.producto);
+    }
+    // Si no, intentar usar la imagen almacenada o la imagen por defecto
+    return item.imagen || 'assets/images/default.jpg';
+  }
+
+  // Método para incrementar la cantidad de un item
+  incrementarCantidad(item: CartItem): void {
+    console.log('Incrementando cantidad para:', item.nombre);
     
-    // Solo actualizar si la cantidad es válida
-    if (newQuantity >= 1) {
-      // Usar cadena vacía como respaldo si el color es undefined
-      this.cartService.updateItemQuantity(id, color || '', newQuantity);
+    // Actualizar la cantidad
+    this.cartService.updateItemQuantity(item.id, item.color || '', item.cantidad + 1);
+    
+    // Corregir el formato del total después de actualizar
+    setTimeout(() => {
+      this.fixPriceFormat();
+    }, 100);
+  }
+
+  // Método para decrementar la cantidad de un item
+  decrementarCantidad(item: CartItem): void {
+    if (item.cantidad > 1) {
+      console.log('Decrementando cantidad para:', item.nombre);
+      
+      // Actualizar la cantidad
+      this.cartService.updateItemQuantity(item.id, item.color || '', item.cantidad - 1);
+      
+      // Corregir el formato del total después de actualizar
+      setTimeout(() => {
+        this.fixPriceFormat();
+      }, 100);
     }
   }
 
+  // Método para eliminar un item
+  eliminarItem(item: CartItem): void {
+    this.confirmRemoveItem(item);
+  }
+
+  // Método para calcular el total formateado a 2 decimales
+  calcularTotal(): string {
+    return this.total.toFixed(2) + '€';
+  }
+
+  // Método para procesar la compra
+  procesarCompra(): void {
+    this.checkout();
+  }
+
   // Método para confirmar eliminación con SweetAlert
-  confirmRemoveItem(event: Event, id: number, color: string | undefined): void {
-    // Detener propagación del evento para evitar que se cierre el carrito
-    event.preventDefault();
-    event.stopPropagation();
-    
+  confirmRemoveItem(item: CartItem): void {
     // Activar bandera de eliminación
     this.isRemoving = true;
+    console.log('CartComponent: Iniciando proceso de eliminación para', item.nombre);
     
-    // Utilizar SweetAlert2 con z-index alto
+    // Utilizar SweetAlert2 para confirmar
     Swal.fire({
       title: '¿Eliminar este producto?',
       text: '¿Estás seguro de que deseas eliminar este producto del carrito?',
@@ -193,31 +420,32 @@ export class CartComponent implements OnInit, OnDestroy {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,  // Evitar que se cierre al hacer clic fuera
-      allowEscapeKey: false      // Evitar que se cierre con Escape
+      allowOutsideClick: false,
+      allowEscapeKey: false
     }).then((result) => {
-      // Ejecutar en la zona de Angular para asegurar detección de cambios
       this.zone.run(() => {
         if (result.isConfirmed) {
-          // Comprobar si era el último producto
-          const wasLastItem = this.cartItems.length === 1;
+          // Comprobar cuántos productos quedarán después de eliminar este
+          const itemsRemaining = this.cartItems.length - 1;
           
           // Eliminar el item del carrito
-         this.removeItem(id, color || '');
+          this.removeItem(item.id, item.color || '');
           
-          // Solo cerrar el carrito si era el último producto
-          if (wasLastItem) {
-            // Dar tiempo para que se actualice la UI
+          // SOLO resetear isRemoving y cerrar el carrito si no quedarán más artículos
+          if (itemsRemaining <= 0) {
             setTimeout(() => {
               this.isRemoving = false;
               this.closeCart();
             }, 500);
           } else {
-            // Mantener el carrito abierto
-            this.isRemoving = false;
+            // Mantener el carrito abierto cuando quedan más artículos
+            setTimeout(() => {
+              this.isRemoving = false;
+              this.fixPriceFormat();
+            }, 500);
           }
         } else {
-          // Si canceló la eliminación
+          // Canceló la eliminación
           this.isRemoving = false;
         }
       });
@@ -233,13 +461,19 @@ export class CartComponent implements OnInit, OnDestroy {
   // Método para actualizar cantidad desde el componente OrderLine
   updateQuantity(data: {line: OrderLine, newQuantity: number}): void {
     this.cartService.updateItemQuantity(data.line.idprod, data.line.color, data.newQuantity);
+    
+    // Corregir el formato del total después de actualizar
+    setTimeout(() => {
+      this.fixPriceFormat();
+    }, 100);
   }
 
-  // Método para proceder al checkout
+  // ✅ MÉTODO CHECKOUT CORREGIDO
   checkout(): void {
+    console.log('🛒 Iniciando checkout desde carrito');
+    
     // Verificar que el carrito no esté vacío
     if (this.cartItems.length === 0) {
-      // Mostrar alerta si el carrito está vacío
       Swal.fire({
         title: 'El carrito está vacío',
         icon: 'info',
@@ -248,26 +482,22 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Verificar que el usuario esté autenticado
+    // Verificar autenticación
     if (!this.authService.currentUserValue) {
-      // Mostrar alerta si el usuario no está autenticado
-      Swal.fire({
-        title: 'Debes iniciar sesión para poder procesar la compra',
-        icon: 'error',
-        confirmButtonColor: '#52667a'
-      }).then(() => {
-        // Cerrar el carrito antes de redirigir
-        this.closeCart();
-        // Redirigir a la página de login con retorno a checkout
-        this.router.navigate(['/login'], { 
-          queryParams: { returnUrl: '/checkout' } 
-        });
-      });
+      console.log('🔒 Usuario no autenticado, abriendo popup');
+      
+      // ✅ SOLO popup, NO navegación manual
+      this.loginPopupService.openForCheckout('/checkout');
+      
+      // ✅ Cerrar carrito para limpiar la interfaz
+      this.closeCart();
+      
       return;
     }
 
-    // Si todo está bien, navegar a la página de checkout
-    this.closeCart(); // Cerrar el carrito primero
+    // ✅ Si está autenticado, proceder al checkout
+    console.log('✅ Usuario autenticado, navegando a checkout');
+    this.closeCart();
     this.router.navigate(['/checkout']);
   }
 }
