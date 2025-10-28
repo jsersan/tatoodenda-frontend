@@ -1,19 +1,19 @@
-<!-- src/app/components/product/product-popup/product-popup.component.html - VERSIÓN ACTUALIZADA -->
+<!-- src/app/components/product/product-popup/product-popup.component.html -->
 
 <!-- Overlay para el fondo oscurecido -->
-<div class="product-overlay" [class.active]="isOpen"></div>
+<div class="product-overlay" [class.active]="currentProduct !== null"></div>
 
 <!-- Contenedor principal del popup -->
-<div class="product-popup" [class.active]="isOpen">
+<div class="product-popup" [class.active]="currentProduct !== null">
   <!-- Solo mostrar contenido si hay un producto seleccionado -->
   <ng-container *ngIf="currentProduct">
     <!-- Cabecera del popup con título y botón de cierre -->
     <div class="product-header">
       <h2>{{ currentProduct.nombre }}</h2>
-      <button class="close-product" (click)="closePopup()">×</button>
+      <button class="close-product" (click)="closePopup()" aria-label="Cerrar ventana">&times;</button>
     </div>
     
-    <!-- Contenido del producto -->
+    <!-- Contenido del popup -->
     <div class="product-content">
       <!-- Imagen del producto -->
       <div class="product-image-container">
@@ -23,7 +23,7 @@
           class="product-image"
         />
         
-        <!-- ✅ NUEVO: Indicador de colores disponibles -->
+        <!-- Indicador de colores disponibles -->
         <div class="colors-indicator" *ngIf="availableColors.length > 0">
           <small>{{ getColorsMessage() }}</small>
         </div>
@@ -39,7 +39,7 @@
         <!-- Descripción -->
         <p class="product-description">{{ currentProduct.descripcion }}</p>
         
-        <!-- ✅ MEJORADO: Selector de color solo si hay múltiples colores -->
+        <!-- Selector de color solo si hay múltiples colores -->
         <div class="color-selector" *ngIf="hasMultipleColors()">
           <label for="color-select">Selecciona un color:</label>
           <select 
@@ -52,13 +52,13 @@
           </select>
         </div>
         
-        <!-- ✅ NUEVO: Mostrar color único si solo hay uno -->
+        <!-- Mostrar color único si solo hay uno -->
         <div class="single-color-display" *ngIf="!hasMultipleColors() && availableColors.length > 0">
           <label>Color:</label>
           <span class="color-badge">{{ selectedColor | titlecase }}</span>
         </div>
         
-        <!-- ✅ MEJORADO: Selector de cantidad con mejor diseño -->
+        <!-- Selector de cantidad -->
         <div class="quantity-selector">
           <label>Cantidad:</label>
           <div class="quantity-controls">
@@ -66,8 +66,9 @@
               type="button" 
               class="quantity-btn" 
               (click)="decrementQuantity()"
-              [disabled]="quantity <= 1">
-              -
+              [disabled]="quantity <= 1"
+              aria-label="Disminuir">
+              −
             </button>
             <input 
               type="number" 
@@ -79,17 +80,18 @@
             <button 
               type="button" 
               class="quantity-btn" 
-              (click)="incrementQuantity()">
+              (click)="incrementQuantity()"
+              aria-label="Aumentar">
               +
             </button>
           </div>
         </div>
         
-        <!-- ✅ MEJORADO: Botón de añadir al carrito con estado de carga -->
+        <!-- Botón de añadir al carrito -->
         <button 
           class="add-to-cart-btn" 
           (click)="addToCart()"
-          [disabled]="loading">
+          [disabled]="loading || !currentProduct">
           <span *ngIf="!loading">AÑADIR AL CARRITO</span>
           <span *ngIf="loading">CARGANDO...</span>
         </button>
@@ -98,97 +100,4 @@
   </ng-container>
 </div>
 
-<!-- ✅ ESTILOS ADICIONALES INLINE PARA LOS NUEVOS ELEMENTOS -->
-<style>
-.colors-indicator {
-  text-align: center;
-  margin-top: 10px;
-  opacity: 0.7;
-  font-style: italic;
-}
 
-.single-color-display {
-  margin: 15px 0;
-  text-align: center;
-}
-
-.single-color-display label {
-  display: inline-block;
-  margin-right: 10px;
-  font-weight: bold;
-}
-
-.color-badge {
-  background-color: #f0f0f0;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 0.9em;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-.color-selector select {
-  padding: 8px 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 80%;
-  max-width: 250px;
-  font-size: 14px;
-}
-
-.quantity-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0;
-  margin: 10px auto;
-  width: fit-content;
-}
-
-.quantity-btn {
-  width: 36px;
-  height: 36px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  font-size: 18px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.quantity-btn:hover:not(:disabled) {
-  background-color: #e0e0e0;
-}
-
-.quantity-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.quantity-btn:first-child {
-  border-radius: 5px 0 0 5px;
-}
-
-.quantity-btn:last-child {
-  border-radius: 0 5px 5px 0;
-}
-
-.quantity-input {
-  width: 60px;
-  height: 36px;
-  border: 1px solid #ddd;
-  border-left: none;
-  border-right: none;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.add-to-cart-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-</style>

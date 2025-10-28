@@ -1,4 +1,4 @@
-// src/app/app.module.ts - ARCHIVO VERIFICADO
+// src/app/app.module.ts - ARCHIVO COMPLETO ACTUALIZADO
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -7,9 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 
-// Importar el interceptor de errores
+// Importar los interceptors
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 
+// Componentes principales y compartidos
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
@@ -28,10 +30,14 @@ import { OrderLineComponent } from './components/orderline/orderline.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { HeaderComponent } from './components/shared/header/header.component';
 import { ImageUrlPipe } from './pipes/image-url.pipe';
-// ✅ SOLO los popups (sin componentes de página completa)
+
+// ✅ Componentes modales y popups
 import { LoginPopupComponent } from './components/login-popup/login-popup.component';
 import { RegistroPopupComponent } from './components/registro-popup/registro-popup.component';
 import { HistorialPedidosComponent } from './components/historial-pedidos/historial-pedidos.component';
+import { PasswordConfirmModalComponent } from './components/password-confirm-modal/password-confirm-modal';
+
+// Servicios
 import { PdfService } from './services/pdf.service';
 
 @NgModule({
@@ -44,7 +50,7 @@ import { PdfService } from './services/pdf.service';
     ProductListComponent,
     ProductDetailComponent,
     ProductPopupComponent,
-    CartComponent, // ✅ Verificado que tiene @Component
+    CartComponent,
     CheckoutComponent,
     AdminComponent,
     CategoryManagerComponent,
@@ -54,10 +60,11 @@ import { PdfService } from './services/pdf.service';
     OrderLineComponent,
     BannerComponent,
     HeaderComponent,
-    // ✅ SOLO popups
+    // ✅ Modales y popups
     LoginPopupComponent,
     RegistroPopupComponent,
-    HistorialPedidosComponent
+    HistorialPedidosComponent,
+    PasswordConfirmModalComponent
   ],
   imports: [
     BrowserModule,
@@ -68,9 +75,11 @@ import { PdfService } from './services/pdf.service';
     RouterModule
   ],
   providers: [
-    // Añadir el interceptor de errores a los proveedores
+    // ✅ Interceptors (el orden importa: primero Auth, luego Error)
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    [PdfService]
+    // Servicios
+    PdfService
   ],
   bootstrap: [AppComponent]
 })

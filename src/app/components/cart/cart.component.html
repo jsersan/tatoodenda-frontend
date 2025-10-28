@@ -24,7 +24,6 @@
           <tbody>
             <tr *ngFor="let item of cartItems">
               <td class="articulo-cell" data-label="Artículo">
-                <!-- Modificado: Usar productService para gestión de imágenes -->
                 <img [src]="getImageSrc(item)" [alt]="item.nombre" (error)="productService.handleImageError($event)" />
                 <span class="articulo-nombre">{{ item.nombre }}</span>
               </td>
@@ -36,8 +35,10 @@
                   <button class="qty-btn" (click)="incrementarCantidad(item)">+</button>
                 </div>
               </td>
-              <td class="precio-cell" data-label="Precio(u)">{{ item.precio }}€</td>
-              <td class="precio-total-cell" data-label="Precio (total)">{{ (item.precio * item.cantidad) | number:'1.2-2' }}€</td>
+              <!-- ✅ CORRECCIÓN: Euro después con espacio -->
+              <td class="precio-cell" data-label="Precio(u)">{{ item.precio | number:'1.2-2' }} €</td>
+              <!-- ✅ CORRECCIÓN: Euro después con espacio -->
+              <td class="precio-total-cell" data-label="Precio (total)">{{ (item.precio * item.cantidad) | number:'1.2-2' }} €</td>
               <td class="acciones-cell">
                 <button class="remove-item" (click)="eliminarItem(item)">×</button>
               </td>
@@ -49,7 +50,8 @@
       <div class="cart-footer">
         <div class="cart-total-row">
           <span class="total-label">Total:</span>
-          <span class="total-value">{{ total | number:'1.2-2' }}€</span>
+          <!-- ✅ CORRECCIÓN: Euro después con espacio -->
+          <span class="total-value">{{ total | number:'1.2-2' }} €</span>
         </div>
 
         <button class="procesar-compra-btn" (click)="procesarCompra()">

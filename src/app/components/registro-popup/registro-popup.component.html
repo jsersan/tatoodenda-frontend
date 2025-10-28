@@ -1,124 +1,156 @@
-<!-- registro-popup.component.html - CON CONTROL DE VISIBILIDAD -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crear cuenta</h2>
+      <p>Completa tus datos para empezar a comprar</p>
+      <button class="close-btn" (click)="onClose()" aria-label="Cerrar">&times;</button>
+    </div>
 
-<div class="popup-overlay" *ngIf="isVisible" (click)="onClosePopup()">
-  <div class="popup-content" (click)="$event.stopPropagation()">
-    
-    <!-- Botón para cerrar -->
-    <button class="close-btn" (click)="onClosePopup()">×</button>
-    
-    <h2>Registro</h2>
-    
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      
-      <div class="form-group">
-        <label for="usuario">USUARIO:</label>
-        <input 
-          type="text" 
-          id="usuario" 
-          formControlName="username"
-          placeholder="jsersan@irakasle.eus"
-          [class.is-invalid]="isFieldInvalid('username')"
-        />
-        <div *ngIf="isFieldInvalid('username')" class="error-message">
-          {{ getFieldError('username') }}
+    <div class="modal-body">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-section">
+          <h3>CREDENCIALES DE ACCESO</h3>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="username">USUARIO *</label>
+              <input
+                type="text"
+                id="username"
+                formControlName="username"
+                placeholder="Elige un nombre de usuario"
+                [class.invalid]="submitted && f['username'].errors"
+              />
+              <div *ngIf="submitted && f['username'].errors" class="error-message">
+                <span *ngIf="f['username'].errors?.['required']">El nombre de usuario es obligatorio</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="password">CONTRASEÑA *</label>
+              <div class="password-input-wrapper">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  id="password"
+                  formControlName="password"
+                  placeholder="Mínimo 6 caracteres"
+                  [class.invalid]="submitted && f['password'].errors"
+                />
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                <!-- icono ojo aquí -->
+              </button>
+              <div *ngIf="submitted && f['password'].errors" class="error-message">
+                <span *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria</span>
+                <span *ngIf="f['password'].errors?.['minlength']">La contraseña debe tener mínimo 6 caracteres</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="contrasena">CONTRASEÑA:</label>
-        <input 
-          type="password" 
-          id="contrasena" 
-          formControlName="password"
-          placeholder="••••••••"
-          [class.is-invalid]="isFieldInvalid('password')"
-        />
-        <div *ngIf="isFieldInvalid('password')" class="error-message">
-          {{ getFieldError('password') }}
+        <div class="form-section">
+          <h3>INFORMACIÓN PERSONAL</h3>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="nombre">NOMBRE COMPLETO *</label>
+              <input
+                type="text"
+                id="nombre"
+                formControlName="nombre"
+                placeholder="Tu nombre y apellidos"
+                [class.invalid]="submitted && f['nombre'].errors"
+              />
+              <div *ngIf="submitted && f['nombre'].errors" class="error-message">
+                <span *ngIf="f['nombre'].errors?.['required']">El nombre completo es obligatorio</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="email">EMAIL *</label>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="tu@email.com"
+                [class.invalid]="submitted && f['email'].errors"
+              />
+              <div *ngIf="submitted && f['email'].errors" class="error-message">
+                <span *ngIf="f['email'].errors?.['required']">El email es obligatorio</span>
+                <span El *ngIf="f['email'].errors?.['minlength']">El email no es válido</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- CRÍTICO: Este debe ser 'nombre' -->
-      <div class="form-group">
-        <label for="nombreCompleto">NOMBRE COMPLETO:</label>
-        <input 
-          type="text" 
-          id="nombreCompleto" 
-          formControlName="nombre"
-          placeholder="Txema"
-          [class.is-invalid]="isFieldInvalid('nombre')"
-        />
-        <div *ngIf="isFieldInvalid('nombre')" class="error-message">
-          {{ getFieldError('nombre') }}
+        <div class="form-section">
+          <h3>DIRECCIÓN DE ENVÍO</h3>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="direccion">DIRECCIÓN *</label>
+              <input
+                type="text"
+                id="direccion"
+                formControlName="direccion"
+                placeholder="Calle, número, piso…"
+                (blur)="autoCompleteCP()"
+                [class.invalid]="submitted && f['direccion'].errors"
+              />
+              <div *ngIf="submitted && f['direccion'].errors" class="error-message">
+                <span *ngIf="f['direccion'].errors?.['required']">La dirección es obligatoria</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row two-columns">
+            <div class="form-group">
+              <label for="ciudad">CIUDAD *</label>
+              <input
+                type="text"
+                id="ciudad"
+                formControlName="ciudad"
+                placeholder="Tu ciudad"
+                (blur)="autoCompleteCP()"
+                [class.invalid]="submitted && f['ciudad'].errors"
+              />
+              <div *ngIf="submitted && f['ciudad'].errors" class="error-message">
+                <span *ngIf="f['ciudad'].errors?.['required']">La ciudad es obligatoria</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cp">CÓDIGO POSTAL *</label>
+              <input
+                type="text"
+                id="cp"
+                formControlName="cp"
+                placeholder="00000"
+                [class.invalid]="submitted && f['cp'].errors"
+              />
+              <div *ngIf="submitted && f['cp'].errors" class="error-message">
+                <span *ngIf="f['cp'].errors?.['required']">El código postal es obligatorio</span>
+                <span *ngIf="f['cp'].errors?.['pattern']">Debe contener 5 dígitos</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="email">E-MAIL:</label>
-        <input 
-          type="email" 
-          id="email" 
-          formControlName="email"
-          placeholder="jsersan@irakasle.eus"
-          [class.is-invalid]="isFieldInvalid('email')"
-        />
-        <div *ngIf="isFieldInvalid('email')" class="error-message">
-          {{ getFieldError('email') }}
+        <button type="submit" class="btn-submit" [disabled]="loading || registerForm.invalid">
+          CREAR CUENTA
+          <span *ngIf="loading" class="loading-spinner"></span>
+        </button>
+
+        <div class="footer-links">
+          <p>
+            ¿Ya tienes cuenta?
+            <a href="#" (click)="switchToLoginModal($event)">Inicia sesión</a>
+          </p>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label for="direccion">DIRECCIÓN:</label>
-        <input 
-          type="text" 
-          id="direccion" 
-          formControlName="direccion"
-          placeholder="Zerrajera, 6 12B"
-          [class.is-invalid]="isFieldInvalid('direccion')"
-        />
-        <div *ngIf="isFieldInvalid('direccion')" class="error-message">
-          {{ getFieldError('direccion') }}
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="ciudad">CIUDAD:</label>
-        <input 
-          type="text" 
-          id="ciudad" 
-          formControlName="ciudad"
-          placeholder="Arrasate"
-          [class.is-invalid]="isFieldInvalid('ciudad')"
-        />
-        <div *ngIf="isFieldInvalid('ciudad')" class="error-message">
-          {{ getFieldError('ciudad') }}
-        </div>
-      </div>
-
-      <!-- CRÍTICO: Este debe ser 'cp' -->
-      <div class="form-group">
-        <label for="codigoPostal">CÓDIGO POSTAL:</label>
-        <input 
-          type="text" 
-          id="codigoPostal" 
-          formControlName="cp"
-          placeholder="20500"
-          [class.is-invalid]="isFieldInvalid('cp')"
-        />
-        <div *ngIf="isFieldInvalid('cp')" class="error-message">
-          {{ getFieldError('cp') }}
-        </div>
-      </div>
-
-      <button 
-        type="submit" 
-        [disabled]="loading"
-        class="btn-register"
-      >
-        {{ loading ? 'REGISTRANDO...' : 'REGISTRARSE' }}
-      </button>
-      
-    </form>
-    
+    </div>
+  </form>
   </div>
 </div>

@@ -353,13 +353,13 @@ export class CartComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Método para obtener la ruta de la imagen del producto
   getImageSrc(item: CartItem): string {
-    // Si el item tiene un objeto producto, usar productService para obtener la imagen
     if (item.producto) {
-      return this.productService.getProductImageSrc(item.producto);
+      // Pasa el color seleccionado
+      return this.productService.getProductImageSrc(item.producto, item.color);
     }
-    // Si no, intentar usar la imagen almacenada o la imagen por defecto
-    return item.imagen || 'assets/images/default.jpg';
+    return item.imagen || "assets/images/default.jpg";
   }
+  
 
   // Método para incrementar la cantidad de un item
   incrementarCantidad(item: CartItem): void {

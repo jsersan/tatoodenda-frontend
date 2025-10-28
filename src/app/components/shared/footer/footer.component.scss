@@ -40,11 +40,11 @@ footer p {
 }
 
 /* Año del copyright con estilo diferente */
-footer p:last-child {
-  font-size: 16px !important; /* Aumentado de 12px a 16px */
-  opacity: 0.9 !important; /* Aumentado de 0.8 a 0.9 para mejor visibilidad */
+/* footer p:last-child {
+  font-size: 16px !important;
+  opacity: 0.9 !important; 
   margin-top: 5px !important;
-}
+} */
 
 /* Responsive para el footer */
 @media screen and (max-width: 768px) {

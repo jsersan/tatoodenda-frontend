@@ -1,50 +1,50 @@
-<!-- profile.component.html - ARCHIVO COMPLETO -->
+<!-- profile.component.html - ARCHIVO COMPLETO FINAL -->
 
 <!-- Sección de datos del usuario -->
 <div id="divdatos">
   <h1 id="titulo">Datos</h1>
   <!-- Formulario para editar datos personales -->
-  <form [formGroup]="profileForm">
+  <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
     <table>
       <!-- Campo: Nombre de usuario -->
       <tr>
-        <td>Nombre de usuario: </td>
+        <td>Nombre de usuario:</td>
         <td><input type="text" id="txtusername" formControlName="username" size="10"/></td>
       </tr>
       <!-- Campo: Contraseña (opcional) -->
       <tr>
         <td>Contraseña:</td>
-        <td><input type="password" id="txtpass" formControlName="password" size="10"/></td>
+        <td><input type="password" id="txtpass" formControlName="password" size="10" placeholder="Dejar vacío para no cambiar"/></td>
       </tr>
       <!-- Campo: Email -->
       <tr>
-        <td>E-mail: </td>
+        <td>E-mail:</td>
         <td><input type="email" id="txtemail" formControlName="email" size="20"/></td>
       </tr>
       <!-- Campo: Nombre completo -->
       <tr>
-        <td>Nombre completo</td>
+        <td>Nombre completo:</td>
         <td><input type="text" id="txtnombre" formControlName="nombre" size="25"/></td>
       </tr>
       <!-- Campo: Dirección -->
       <tr>
-        <td>Dirección: </td>
+        <td>Dirección:</td>
         <td><input type="text" id="txtdireccion" formControlName="direccion" size="30"/></td>
       </tr>
       <!-- Campo: Ciudad -->
       <tr>
-        <td>Ciudad: </td>
+        <td>Ciudad:</td>
         <td><input type="text" id="txtciudad" formControlName="ciudad" size="15"/></td>
       </tr>
       <!-- Campo: Código postal -->
       <tr>
-        <td>Código postal: </td>
+        <td>Código postal:</td>
         <td><input type="text" id="txtcp" formControlName="cp" size="5"/></td>
       </tr>
       <!-- Botón para actualizar datos -->
       <tr>
         <td colspan="2" style="text-align: center">
-          <input type="button" id="actualizarDatos" value="ACTUALIZAR DATOS" (click)="updateProfile()" />
+          <input type="submit" id="actualizarDatos" value="ACTUALIZAR DATOS" [disabled]="!profileForm.valid" />
         </td>
       </tr>
     </table>
@@ -53,3 +53,9 @@
 
 <!-- Usar el componente dedicado para historial de pedidos -->
 <app-historial-pedidos></app-historial-pedidos>
+
+<!-- ✅ Modal profesional de confirmación de contraseña -->
+<app-password-confirm-modal
+  (confirmed)="onPasswordConfirmed($event)"
+  (cancelled)="onPasswordCancelled()">
+</app-password-confirm-modal>

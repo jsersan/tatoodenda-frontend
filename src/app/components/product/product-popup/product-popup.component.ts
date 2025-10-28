@@ -1,5 +1,4 @@
-// src/app/components/product/product-popup/product-popup.component.ts - VERSIÓN ACTUALIZADA
-
+// src/app/components/product/product-popup/product-popup.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Product } from '../../../models/product';
@@ -10,7 +9,7 @@ import { ProductImageHelper } from '../../../helpers/product-image-helper';
 @Component({
   selector: 'app-product-popup',
   templateUrl: './product-popup.component.html',
-  styleUrls: []
+  styleUrls: ['./product-popup.component.scss']
 })
 export class ProductPopupComponent implements OnInit, OnDestroy {
   currentProduct: Product | null = null;
@@ -37,6 +36,7 @@ export class ProductPopupComponent implements OnInit, OnDestroy {
         this.resetOptions();
         this.loadProductColors();
       } else {
+        this.currentProduct = null;
         this.isOpen = false;
       }
     });
@@ -48,111 +48,156 @@ export class ProductPopupComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * ✅ MÉTODO MEJORADO: Cargar colores específicos del producto
-   */
   loadProductColors(): void {
     if (!this.currentProduct) return;
-
-    this.loading = true;
-    console.log('🎨 Cargando colores para:', this.currentProduct.nombre);
     
-    // Llamar al método actualizado del servicio
+    this.loading = true;
+    
     this.productService.getProductColors(this.currentProduct.id).subscribe({
       next: (colors) => {
         this.loading = false;
-        console.log('✅ Colores recibidos del servicio:', colors);
-        
-        if (colors && colors.length > 0) {
-          this.availableColors = colors;
-          this.selectedColor = colors[0]; // Seleccionar el primer color por defecto
-          console.log('🎯 Color seleccionado por defecto:', this.selectedColor);
-        } else {
-          this.availableColors = ['Estándar'];
-          this.selectedColor = 'Estándar';
+        let filteredColors = (colors || []).filter(
+          c => !!c && c.toLowerCase() !== "default"
+        );
+
+        // ✅ CORRECCIÓN: Lógica especial por nombre (case-insensitive)
+        const nombre = (this.currentProduct?.nombre || "").toLowerCase();
+
+        // ✅ Plug con corazón: SOLO caoba
+        if (nombre.includes("plug con corazon") || nombre.includes("plug con corazón")) {
+          console.log('🎯 Producto "Plug con corazón" detectado, forzando color caoba');
+          filteredColors = ['caoba'];
         }
-        
-        // Actualizar la imagen según el color seleccionado
+        // Otros productos específicos
+        else if (
+          nombre === "plug" ||
+          nombre === "plug de silicona" ||
+          nombre === "expander espiral" ||
+          nombre === "set de dilatadores" ||
+          nombre === "set de dilatadores 6 euros" ||
+          nombre === "set de dilatadores 9 euros" ||
+          nombre === "set de expanders curvados"
+        ) {
+          filteredColors = filteredColors.filter(c => c.toLowerCase() !== "default");
+        }
+
+        // Si se queda vacío, fallback "Estándar"
+        if (filteredColors.length === 0) {
+          filteredColors = ['Estándar'];
+        }
+
+        this.availableColors = filteredColors;
+        this.selectedColor = filteredColors[0] || '';
+        console.log('✅ Colores cargados:', this.availableColors, '| Seleccionado:', this.selectedColor);
         this.updateImageForSelectedColor();
       },
       error: (err) => {
+        console.error('❌ Error cargando colores:', err);
         this.loading = false;
-        console.error('❌ Error loading product colors:', err);
         
-        // ✅ FALLBACK: Usar ProductImageHelper si falla el servicio
-        const fallbackColors = ProductImageHelper.getAvailableColors(this.currentProduct?.nombre || '');
-        console.log('🔄 Usando colores de fallback:', fallbackColors);
+        // Fallback con la misma lógica
+        const nombre = this.currentProduct?.nombre?.toLowerCase() || "";
+        let fallbackColors: string[] = [];
+        
+        if (nombre.includes("plug con corazon") || nombre.includes("plug con corazón")) {
+          console.log('🎯 Error en carga, forzando caoba para "Plug con corazón"');
+          fallbackColors = ["caoba"];
+        } else {
+          fallbackColors = ProductImageHelper.getAvailableColors(this.currentProduct?.nombre || '')
+            .filter(c => !!c && c.toLowerCase() !== "default");
+        }
+
+        if (fallbackColors.length === 0) fallbackColors = ['Estándar'];
         
         this.availableColors = fallbackColors;
-        this.selectedColor = fallbackColors[0] || 'Estándar';
+        this.selectedColor = fallbackColors[0] || '';
+        console.log('✅ Colores fallback:', this.availableColors);
         this.updateImageForSelectedColor();
       }
     });
   }
 
-  /**
-   * ✅ NUEVO: Actualizar imagen cuando cambia el color
-   */
+  /** ✅ CORREGIDO: Método que usa el helper para construir la ruta correcta */
   updateImageForSelectedColor(): void {
-    if (this.currentProduct) {
-      this.currentImageSrc = ProductImageHelper.getProductImageSrc(
-        this.currentProduct, 
-        this.selectedColor
-      );
-      console.log('🖼️ Imagen actualizada para color', this.selectedColor, ':', this.currentImageSrc);
-    }
+    if (!this.currentProduct) return;
+    
+    console.log('🖼️ Actualizando imagen para:', {
+      producto: this.currentProduct.nombre,
+      color: this.selectedColor
+    });
+
+    // ✅ USAR EL HELPER EN LUGAR DE CONSTRUCCIÓN MANUAL
+    this.currentImageSrc = ProductImageHelper.getProductImageSrc(
+      this.currentProduct, 
+      this.selectedColor
+    );
+    
+    console.log('✅ Imagen construida por helper:', this.currentImageSrc);
   }
 
-  /**
-   * ✅ MEJORADO: Manejar cambio de color
-   */
+  /** ✅ MEJORADO: Añadir al carrito con imagen correcta */
+  addToCart(): void {
+    if (!this.currentProduct) return;
+    
+    console.log('🛒 Añadiendo al carrito:', {
+      producto: this.currentProduct.nombre,
+      color: this.selectedColor,
+      cantidad: this.quantity,
+      imagen: this.currentImageSrc
+    });
+
+    // ✅ Crear una copia del producto con la imagen correcta
+    const productWithImage = {
+      ...this.currentProduct,
+      imagenSeleccionada: this.currentImageSrc // Añadir campo extra con imagen
+    };
+
+    // Añadir al carrito
+    this.cartService.addToCart(
+      productWithImage,
+      this.quantity,
+      this.selectedColor
+    );
+
+    console.log(`✅ Producto añadido: ${this.currentProduct.nombre} - Color: ${this.selectedColor} - Cantidad: ${this.quantity}`);
+    
+    // Cerrar el popup
+    this.closePopup();
+  }
+
+  /** Manejar cambio de color */
   onColorChange(): void {
     console.log('🎨 Color cambiado a:', this.selectedColor);
     this.updateImageForSelectedColor();
   }
 
-  // Cerrar el popup
+  /** Cerrar el popup */
   closePopup(): void {
+    console.log('🚪 Cerrando popup...');
+    
+    // Primero limpiar el producto actual para ocultar el modal
+    this.currentProduct = null;
     this.isOpen = false;
-    setTimeout(() => {
-      this.productService.clearSelectedProduct();
-    }, 300); // Dar tiempo para la animación de cierre
+    
+    // Luego limpiar el servicio
+    this.productService.clearSelectedProduct();
   }
 
-  // Añadir al carrito
-  addToCart(): void {
-    if (this.currentProduct) {
-      console.log('🛒 Añadiendo al carrito:', {
-        producto: this.currentProduct.nombre,
-        color: this.selectedColor,
-        cantidad: this.quantity
-      });
-      
-      this.cartService.addToCart(
-        this.currentProduct,
-        this.quantity,
-        this.selectedColor
-      );
-      this.closePopup();
-      
-      // Mostrar confirmación
-      console.log(`✅ Producto añadido: ${this.currentProduct.nombre} - Color: ${this.selectedColor} - Cantidad: ${this.quantity}`);
+  /** Incrementar cantidad */
+  incrementQuantity(): void {
+    if (this.quantity < 99) {
+      this.quantity++;
     }
   }
 
-  // Incrementar cantidad
-  incrementQuantity(): void {
-    this.quantity++;
-  }
-
-  // Decrementar cantidad (mínimo 1)
+  /** Decrementar cantidad (mínimo 1) */
   decrementQuantity(): void {
     if (this.quantity > 1) {
       this.quantity--;
     }
   }
 
-  // Resetear opciones al abrir el popup
+  /** Resetear opciones al abrir el popup */
   private resetOptions(): void {
     this.quantity = 1;
     this.selectedColor = '';
@@ -160,31 +205,25 @@ export class ProductPopupComponent implements OnInit, OnDestroy {
     this.currentImageSrc = '';
   }
 
-  /**
-   * ✅ MEJORADO: Método para obtener la imagen con el color seleccionado
-   */
+  /** Método para obtener la imagen con el color seleccionado */
   getImagePath(): string {
     if (this.currentImageSrc) {
       return this.currentImageSrc;
     }
-    
+
     if (!this.currentProduct) {
       return 'assets/images/default.jpg';
     }
-    
+
     return ProductImageHelper.getProductImageSrc(this.currentProduct, this.selectedColor);
   }
 
-  /**
-   * ✅ NUEVO: Verificar si hay múltiples colores disponibles
-   */
+  /** Verificar si hay múltiples colores disponibles */
   hasMultipleColors(): boolean {
     return this.availableColors.length > 1;
   }
 
-  /**
-   * ✅ NUEVO: Obtener mensaje de colores disponibles
-   */
+  /** Obtener mensaje de colores disponibles */
   getColorsMessage(): string {
     if (this.availableColors.length <= 1) {
       return 'Color único disponible';

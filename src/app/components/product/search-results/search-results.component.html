@@ -1,20 +1,22 @@
 <div class="search-results-container">
-  <!-- Título de la página que muestra el término buscado -->
+  <!-- ✅ Título de resultados de búsqueda (estructura IDÉNTICA a product-list) -->
   <div class="category-header">
-    <h1 id="titulo">
-      Resultados para "{{ searchTerm }}"
+    <h1 id="titulo" *ngIf="!loading && products.length > 0">
+      resultados de la búsqueda para "{{ searchTerm }}"
+    </h1>
+    <h1 id="titulo" *ngIf="!loading && products.length === 0">
+      no se han encontrado productos
     </h1>
   </div>
-  
+
   <!-- Indicador de carga mientras se buscan productos -->
   <div *ngIf="loading" class="loading-indicator">
     <p>Buscando productos...</p>
-    <!-- Aquí podría ir un spinner o animación de carga -->
+    <div class="spinner"></div>
   </div>
   
   <!-- Mensaje cuando no hay resultados -->
   <div *ngIf="!loading && products.length === 0" class="no-results">
-    <p>No se encontraron productos que coincidan con "<strong>{{ searchTerm }}</strong>".</p>
     <p>Intenta con otros términos de búsqueda como:</p>
     <ul>
       <li>anillo, banana, labret, barbell</li>
@@ -23,9 +25,8 @@
     </ul>
   </div>
   
-  <!-- ✅ CONTENEDOR DE RESULTADOS usando la misma estructura que otros componentes -->
+  <!-- ✅ CONTENEDOR DE RESULTADOS usando la misma estructura que product-list -->
   <div id="articulos" *ngIf="!loading && products.length > 0">
-    <!-- ✅ USAR la misma estructura que home.component y product-list.component -->
     <div class="articulo" 
          *ngFor="let product of products" 
          (click)="openProductPopup(product, $event)">
@@ -43,6 +44,5 @@
   </div>
 </div>
 
-<!-- ✅ IMPORTANTE: Incluir el componente popup de producto -->
+<!-- ✅ Incluir el componente popup de producto -->
 <app-product-popup></app-product-popup>
-

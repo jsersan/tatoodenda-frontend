@@ -1,7 +1,8 @@
-// registro-popup.component.ts - VERSIÓN FINAL CORREGIDA
-
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth.service';
+import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -10,241 +11,130 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./registro-popup.component.scss']
 })
 export class RegistroPopupComponent implements OnInit {
-  
-  @Input() isVisible: boolean = false; // ✅ Propiedad que faltaba
-  @Output() closePopup = new EventEmitter<void>(); // ✅ Para cerrar el popup
-  
+  @Input() isVisible = false;
+  @Output() closePopup = new EventEmitter();
+  @Output() registroSuccess = new EventEmitter();
+  @Output() switchToLogin = new EventEmitter();
+
   registerForm: FormGroup;
-  submitted = false;
   loading = false;
-  
-  // URL del backend (actualmente simulado)
-  private readonly BACKEND_URL = 'http://localhost/angular16/tatoodenda/backend/register.php'; // ← Para cuando tengas acceso
+  submitted = false;
+  showPassword = false;
+
+  private readonly apiKey = 'AIzaSyDY3YQ6aNb7YXoz13RIxq5fVyzdbak7sQ0';
 
   constructor(
     private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
     private http: HttpClient
   ) {
-    // Inicializar formulario con validaciones
     this.registerForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      username: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      nombre: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      nombre: ['', [Validators.required, Validators.minLength(2)]],
-      direccion: ['', [Validators.required]],
-      ciudad: ['', [Validators.required]],
+      direccion: ['', Validators.required],
+      ciudad: ['', Validators.required],
       cp: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]]
     });
   }
 
-  ngOnInit(): void {
-    console.log('🔧 RegistroPopupComponent inicializado');
+  ngOnInit() {
+    console.log('✅ RegistroPopupComponent inicializado');
   }
 
-  // Getter para acceso fácil a los controles del formulario
-  get f() { return this.registerForm.controls; }
+  get f() {
+    return this.registerForm.controls;
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  close(): void {
+    this.closePopup.emit();
+  }
+
+  onClose(): void {
+    this.close();
+  }
+
+  switchToLoginModal(event: Event): void {
+    event.preventDefault();
+    this.switchToLogin.emit();
+  }
 
   onSubmit(): void {
     this.submitted = true;
-    
-    console.log('📝 Intento de registro iniciado');
-    console.log('🔍 Estado del formulario:', this.registerForm.valid);
-    console.log('🔍 Valores del formulario:', this.registerForm.value);
-    
-    // Verificar validez del formulario
     if (this.registerForm.invalid) {
-      console.error('❌ Formulario inválido');
-      this.markFormGroupTouched();
       return;
     }
-    
-    // Verificar campos críticos específicamente
-    const formValues = this.registerForm.value;
-    if (!formValues.nombre || formValues.nombre.trim() === '') {
-      console.error('❌ Campo "nombre" está vacío');
-      alert('El campo "Nombre completo" es obligatorio');
-      return;
-    }
-    
-    if (!formValues.cp || formValues.cp.trim() === '') {
-      console.error('❌ Campo "cp" está vacío');
-      alert('El campo "Código postal" es obligatorio');
-      return;
-    }
-    
     this.loading = true;
-    
-    // Crear FormData con validación
-    const formData = new FormData();
-    
-    // Mapear campos exactamente como los espera el backend PHP
-    formData.append('username', formValues.username || '');
-    formData.append('password', formValues.password || '');
-    formData.append('email', formValues.email || '');
-    formData.append('nombre', formValues.nombre || '');
-    formData.append('direccion', formValues.direccion || '');
-    formData.append('ciudad', formValues.ciudad || '');
-    formData.append('cp', formValues.cp || '');
-    
-    // Debug: Mostrar cada campo individualmente
-    console.log('📤 username:', formData.get('username'));
-    console.log('📤 password:', formData.get('password'));
-    console.log('📤 email:', formData.get('email'));
-    console.log('📤 nombre:', formData.get('nombre'));
-    console.log('📤 direccion:', formData.get('direccion'));
-    console.log('📤 ciudad:', formData.get('ciudad'));
-    console.log('📤 cp:', formData.get('cp'));
-    
-    // ✅ SIMULACIÓN COMPLETA DEL BACKEND (sin servidor real)
-    console.log('🚀 Simulando registro en backend...');
-    
-    // Simular validación del lado del servidor
-    const simulateServerValidation = () => {
-      // Simular que algunos emails ya existen
-      const existingEmails = ['test@test.com', 'admin@admin.com', 'usuario@ejemplo.com'];
-      
-      if (existingEmails.includes(formValues.email.toLowerCase())) {
-        throw new Error('El email ya está registrado');
-      }
-      
-      // Simular que algunos usernames ya existen
-      const existingUsernames = ['admin', 'test', 'usuario'];
-      
-      if (existingUsernames.includes(formValues.username.toLowerCase())) {
-        throw new Error('El nombre de usuario ya existe');
-      }
-      
-      // Simular error aleatorio (5% de probabilidad)
-      if (Math.random() < 0.05) {
-        throw new Error('Error temporal del servidor. Inténtalo de nuevo.');
-      }
-      
-      return true;
-    };
-    
-    // Simular delay del servidor (1-3 segundos)
-    const serverDelay = Math.floor(Math.random() * 2000) + 1000;
-    
-    setTimeout(() => {
-      try {
-        // Ejecutar validación simulada del servidor
-        simulateServerValidation();
-        
-        // ✅ SIMULACIÓN DE ÉXITO
-        console.log('✅ Registro simulado exitoso:', {
-          username: formValues.username,
-          email: formValues.email,
-          nombre: formValues.nombre,
-          ciudad: formValues.ciudad,
-          cp: formValues.cp
-        });
-        
+    this.authService.register(this.registerForm.value).subscribe({
+      next: (data) => {
         this.loading = false;
-        this.submitted = false;
-        
-        // Limpiar formulario
         this.registerForm.reset();
-        
-        // Mostrar mensaje de éxito realista
-        alert(`¡Usuario "${formValues.username}" registrado correctamente!`);
-        
-        // Cerrar popup
-        this.onClosePopup();
-        
-      } catch (simulatedError: any) {
-        // ✅ SIMULACIÓN DE ERROR (con tipo corregido)
-        console.error('💥 Error simulado del servidor:', simulatedError.message);
+        this.submitted = false;
+        this.registroSuccess.emit();
+        Swal.fire({
+          title: '¡Cuenta creada!',
+          text: 'Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.',
+          icon: 'success',
+          confirmButtonColor: '#4facfe',
+          confirmButtonText: 'Entendido',
+          timer: 4000,
+          timerProgressBar: true
+        });
+      },
+      error: (error) => {
         this.loading = false;
-        
-        // Mostrar error específico
-        alert(`Error: ${simulatedError.message}`);
-      }
-    }, serverDelay);
-    
-    return; // ← LÍNEA IMPORTANTE: Evita ejecutar el código real del HTTP
-    
-    /* ========================================
-       CÓDIGO REAL DEL BACKEND (DESACTIVADO)
-       ========================================
-       Descomenta esto cuando tengas acceso al backend:
-       
-    this.http.post(this.BACKEND_URL, formData)
-      .subscribe({
-        next: (response) => {
-          console.log('✅ Registro exitoso:', response);
-          this.loading = false;
-          this.submitted = false;
-          
-          this.registerForm.reset();
-          alert('Usuario registrado correctamente');
-          this.onClosePopup();
-        },
-        error: (error) => {
-          console.error('💥 Error en registro:', error);
-          this.loading = false;
-          
-          if (error.error) {
-            console.error('Detalles del error del servidor:', error.error);
-          }
-          
-          let errorMessage = 'Error al registrar usuario.';
-          
-          if (error.status === 500) {
-            errorMessage = 'Error interno del servidor.';
-          } else if (error.status === 400) {
-            errorMessage = 'Datos incorrectos.';
-          } else if (error.status === 0) {
-            errorMessage = 'No se puede conectar al servidor.';
-          }
-          
-          alert(errorMessage);
+        let errorMessage = 'No se pudo crear la cuenta. Por favor, intenta de nuevo.';
+        if (error.message) errorMessage = error.message;
+        if (error.message && error.message.includes('username')) {
+          errorMessage = 'El nombre de usuario ya está en uso. Elige otro.';
         }
-      });
-    */
-  }
-
-  /**
-   * Marcar todos los campos como tocados para mostrar errores
-   */
-  private markFormGroupTouched(): void {
-    Object.keys(this.registerForm.controls).forEach(key => {
-      const control = this.registerForm.get(key);
-      if (control) {
-        control.markAsTouched();
+        if (error.message && error.message.includes('email')) {
+          errorMessage = 'El email ya está registrado.';
+        }
+        Swal.fire({
+          title: 'Error al crear cuenta',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Entendido'
+        });
       }
     });
   }
 
-  /**
-   * Verificar si un campo tiene errores y ha sido tocado
-   */
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.registerForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched || this.submitted));
-  }
+  autoCompleteCP() {
+    const direccion = this.registerForm.get('direccion')?.value;
+    const ciudad = this.registerForm.get('ciudad')?.value;
+    if (!direccion || !ciudad) { return; }
+    const direccionCompleta = encodeURIComponent(`${direccion}, ${ciudad}`);
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${direccionCompleta}&key=${this.apiKey}`;
 
-  /**
-   * Obtener mensaje de error para un campo específico
-   */
-  getFieldError(fieldName: string): string {
-    const field = this.registerForm.get(fieldName);
-    if (field && field.errors) {
-      const errors = field.errors;
-      if (errors['required']) return `${fieldName} es obligatorio`;
-      if (errors['email']) return 'Email inválido';
-      if (errors['minlength']) return `${fieldName} muy corto`;
-      if (errors['pattern']) return `${fieldName} formato inválido`;
-    }
-    return '';
-  }
-
-  /**
-   * Cerrar el popup
-   */
-  onClosePopup(): void {
-    this.closePopup.emit();
-    this.registerForm.reset();
-    this.submitted = false;
-    this.loading = false;
+    this.http.get<any>(url).subscribe({
+      next: (resultado) => {
+        if (
+          resultado.status === 'OK' &&
+          resultado.results &&
+          resultado.results.length > 0
+        ) {
+          const components = resultado.results[0].address_components;
+          const postal = components.find((comp: any) =>
+            comp.types.includes('postal_code')
+          );
+          if (postal) {
+            this.registerForm.get('cp')?.setValue(postal.long_name);
+          }
+        }
+      },
+      error: (err) => {
+        //alert('No se pudo obtener código postal automáticamente.'+ err);
+        console.warn('No se pudo obtener código postal automáticamente.', err);
+      }
+    });
   }
 }

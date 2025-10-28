@@ -1,12 +1,12 @@
-/* login-popup.component.scss - VERSIÓN CORREGIDA */
+/* login-popup.component.scss - COLORES GRISES CORPORATIVOS UNIFICADOS */
 
-/* Variables */
+/* Variables con colores grises corporativos */
 $primary: #52667a;
 $primary-dark: #3d4d5c;
 $primary-light: #c2cdd6;
 $background: white;
 $default-font: 'Montserrat', sans-serif;
-$error-color: #c62828;
+$error-color: #dc3545;
 $success-color: #2e7d32;
 
 /* CRÍTICO: Overlay del popup con z-index muy alto */
@@ -17,17 +17,14 @@ $success-color: #2e7d32;
   width: 100vw !important;
   height: 100vh !important;
   background-color: rgba(0, 0, 0, 0.6) !important;
-  z-index: 99999 !important; /* Aumentado para asegurar que esté por encima */
+  z-index: 99999 !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   backdrop-filter: blur(3px) !important;
-  
-  /* Animación de entrada */
   animation: fadeIn 0.3s ease-out !important;
 }
 
-/* Animación de fade in */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -49,12 +46,9 @@ $success-color: #2e7d32;
   max-height: 90vh !important;
   overflow: hidden !important;
   position: relative !important;
-  
-  /* Animación de entrada del contenedor */
   animation: slideInUp 0.4s ease-out !important;
 }
 
-/* Animación de slide in desde abajo */
 @keyframes slideInUp {
   from {
     transform: translateY(50px) scale(0.95);
@@ -76,7 +70,7 @@ $success-color: #2e7d32;
   font-size: 24px !important;
   color: #666 !important;
   cursor: pointer !important;
-  z-index: 100001 !important; /* Por encima del contenedor */
+  z-index: 100001 !important;
   width: 35px !important;
   height: 35px !important;
   display: flex !important;
@@ -98,26 +92,26 @@ $success-color: #2e7d32;
   }
 }
 
-/* Encabezado del popup */
+/* Encabezado del popup - GRIS CORPORATIVO */
 .login-popup-header {
-  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%) !important;
+  background-color: $primary !important;
   color: white !important;
-  padding: 15px 30px !important; /* Reducido de 25px a 15px */
+  padding: 15px 30px !important;
   text-align: center !important;
   position: relative !important;
   
   .login-title {
     margin: 0 !important;
-    font-family: 'Lovers Quarrel', cursive !important;
-    font-size: 2.2em !important; /* Reducido de 2.8em a 2.2em */
-    font-weight: normal !important;
-    font-style: italic !important;
-    text-transform: lowercase !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    font-family: 'Montserrat', Arial, sans-serif !important;
+    font-size: 2.2em !important;
+    font-weight: 600 !important;
+    font-style: normal !important;
+    text-transform: uppercase !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
     color: white !important;
+    letter-spacing: 1px !important;
   }
   
-  /* Decoración adicional */
   &::after {
     content: '' !important;
     position: absolute !important;
@@ -133,7 +127,7 @@ $success-color: #2e7d32;
 
 /* Contenido del popup */
 .login-popup-content {
-  padding: 25px 30px 30px !important; /* Reducido el padding superior de 35px a 25px */
+  padding: 25px 30px 30px !important;
   background: white !important;
   
   form {
@@ -206,7 +200,6 @@ $success-color: #2e7d32;
   }
 }
 
-/* Animación para el mensaje de error */
 @keyframes slideInError {
   from {
     opacity: 0;
@@ -218,9 +211,9 @@ $success-color: #2e7d32;
   }
 }
 
-/* Botón de login */
+/* Botón de login - GRIS CORPORATIVO */
 .login-btn {
-  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%) !important;
+  background-color: $primary !important;
   color: white !important;
   border: none !important;
   padding: 16px 25px !important;
@@ -234,11 +227,12 @@ $success-color: #2e7d32;
   margin-top: 10px !important;
   position: relative !important;
   overflow: hidden !important;
+  box-shadow: 0 4px 12px rgba($primary, 0.3) !important;
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $primary-dark 0%, darken($primary-dark, 10%) 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba($primary, 0.4) !important;
+    background-color: $primary-dark !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba($primary, 0.4) !important;
   }
   
   &:active:not(:disabled) {
@@ -275,7 +269,7 @@ $success-color: #2e7d32;
   100% { transform: rotate(360deg); }
 }
 
-/* Enlace de registro */
+/* Enlace de registro - GRIS CORPORATIVO */
 .register-link {
   text-align: center !important;
   margin-top: 25px !important;
@@ -309,14 +303,14 @@ $success-color: #2e7d32;
   }
   
   .login-popup-content {
-    padding: 20px 20px 20px !important; /* Ajustado para móvil */
+    padding: 20px 20px 20px !important;
   }
   
   .login-popup-header {
-    padding: 12px 25px !important; /* Reducido para móvil */
+    padding: 12px 25px !important;
     
     .login-title {
-      font-size: 1.6em !important; /* Ajustado para móvil con fuente normal */
+      font-size: 1.6em !important;
     }
   }
   
@@ -342,24 +336,14 @@ $success-color: #2e7d32;
   }
   
   .login-popup-header {
-    padding: 10px 20px !important; /* Más compacto para móviles pequeños */
+    padding: 10px 20px !important;
     
     .login-title {
-      font-size: 1.4em !important; /* Ajustado para móviles pequeños con fuente normal */
+      font-size: 1.4em !important;
     }
   }
   
   .login-popup-content {
-    padding: 18px 18px !important; /* Compacto para móviles pequeños */
+    padding: 18px 18px !important;
   }
-}
-
-/* REGLA GLOBAL PARA ASEGURAR QUE SE APLIQUE LA FUENTE CORRECTA */
-:host ::ng-deep .login-title,
-::ng-deep .login-popup-header .login-title,
-.login-popup-overlay .login-popup-container .login-popup-header .login-title {
-  font-family: 'Montserrat', Arial, Helvetica, sans-serif !important;
-  font-style: normal !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
 }

@@ -8,16 +8,15 @@
    6. Títulos de Secciones
    7. Grid de Artículos
    8. Visualización de Artículo
-   9. Popup de Producto
-   10. Visualización del Carrito
-   11. Login y Registro
-   12. Checkout
-   13. Perfil de Usuario
-   14. Admin
-   15. Modales y Utilitarios
-   16. Footer
-   17. Animaciones
-   18. Responsive
+   9. Visualización del Carrito
+   10. Login y Registro
+   11. Checkout
+   12. Perfil de Usuario
+   13. Admin
+   14. Modales y Utilitarios
+   15. Footer
+   16. Animaciones
+   17. Responsive
    ========================================================================== */
 
 /* ==========================================================================
@@ -199,68 +198,63 @@
      border-bottom: none !important;
    }
    
-   /* ==========================================================================
-      7. Grid de Artículos
-      ========================================================================== */
-   #articulos {
-     margin: 20px;
-     padding: 0 20px;
-     display: flex;
-     flex-wrap: wrap;
-     align-items: flex-start;
-     justify-content: space-around;
-     
-     .articulo {
-       cursor: pointer;
-       width: 230px;
-       display: flex;
-       flex-direction: column;
-       margin: 5px 10px;
-       padding: 10px;
-       transition: transform 0.3s ease, box-shadow 0.3s ease;
-       
-       &:hover {
-         transform: translateY(-5px);
-         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-       }
-       
-       img {
-         width: 150px;
-         height: 150px;
-         object-fit: contain;
-         margin: 0 auto;
-       }
-       
-       h2 {
-         text-align: center;
-         font-size: 1.4em;
-         font-weight: bold;
-         margin-top: 10px;
-         margin-bottom: 8px;
-       }
-       
-       h3 {
-         text-align: right;
-         padding: 0 15px;
-         margin: 5px 0;
-         font-size: 1.15em;
-         font-weight: bold;
-       }
-       
-       p {
-         width: 100%;
-         margin: 0 auto;
-         margin-top: 10px;
-         text-align: justify;
-         font-size: 1em;
-         line-height: 1.5;
-         overflow: hidden;
-         display: -webkit-box;
-         -webkit-line-clamp: 3;
-         -webkit-box-orient: vertical;
-       }
-     }
-   }
+  /* ==========================================================================
+   7. Grid de Artículos - CORREGIDO SIN SOMBRAS
+   ========================================================================== */
+#articulos {
+  margin: 20px;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-around;
+  
+  .articulo {
+    cursor: pointer;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 10px;
+    padding: 10px;
+    // ❌ ELIMINADO: transition y hover con sombras
+    
+    img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+    
+    h2 {
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: normal;  // ✅ Sin negrita
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+    
+    h3 {
+      text-align: center;  // ✅ Cambiado de right a center
+      padding: 0 15px;
+      margin: 5px 0;
+      font-size: 1.3em;
+      font-weight: normal;  // ✅ Sin negrita
+    }
+    
+    p {
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 10px;
+      text-align: justify;
+      font-size: 1em;
+      line-height: 1.5;
+      overflow: visible;  // ✅ Cambiado de hidden a visible
+      white-space: normal;
+      word-wrap: break-word;
+      // ❌ ELIMINADO: -webkit-line-clamp y -webkit-box-orient
+    }
+  }
+}
    
    /* ==========================================================================
       8. Visualización de Artículo
@@ -315,205 +309,7 @@
    }
    
    /* ==========================================================================
-      9. Popup de Producto
-      ========================================================================== */
-   /* Overlay de fondo */
-   .product-overlay {
-     position: fixed;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     background-color: rgba(0, 0, 0, 0.6);
-     z-index: 9998;
-     display: none;
-     
-     &.active {
-       display: block;
-     }
-   }
-   
-   /* Contenedor del popup */
-   .product-popup {
-     position: fixed;
-     top: 50%;
-     left: 50%;
-     transform: translate(-50%, -50%);
-     background-color: white;
-     z-index: 9999;
-     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-     border-radius: 10px;
-     padding: 25px;
-     max-width: 90vw;
-     max-height: 90vh;
-     width: 500px;
-     overflow-y: auto;
-     display: none;
-     
-     &.active {
-       display: block;
-       animation: fadeIn 0.3s ease;
-     }
-   }
-   
-   /* Cabecera del popup */
-   .product-header, 
-   .modal-header, 
-   .popup-header {
-     position: relative !important;
-     display: flex !important;
-     justify-content: center !important;
-     align-items: center !important;
-     padding: 15px 40px !important;
-     text-align: center !important;
-     
-     h2 {
-       margin: 0;
-       font-size: 1.5em;
-       font-weight: 600;
-       text-align: center;
-     }
-   }
-   
-   /* Botón de cierre */
-   .close-button, 
-   .popup-close, 
-   .modal-close, 
-   .close-product {
-     position: absolute !important;
-     top: 15px !important;
-     right: 15px !important;
-     font-size: 24px !important;
-     background: none !important;
-     border: none !important;
-     cursor: pointer !important;
-     z-index: 1 !important;
-     padding: 5px !important;
-     line-height: 1 !important;
-   }
-   
-   /* Contenido del producto */
-   .product-content {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     
-     .product-image {
-       width: 150px;
-       margin-bottom: 20px;
-       max-height: 200px;
-       object-fit: contain;
-     }
-     
-     .product-details {
-       width: 100%;
-       text-align: center;
-       
-       h3 {
-         margin-bottom: 5px;
-         font-size: 1.5em;
-       }
-       
-       .product-price {
-         font-size: 1.5em;
-         font-weight: bold;
-         color: $primary;
-         margin-bottom: 15px;
-       }
-       
-       .product-description {
-         margin-bottom: 20px;
-         line-height: 1.6;
-         text-align: justify;
-       }
-       
-       .color-selector, 
-       .quantity-selector {
-         margin: 15px 0;
-         
-         label {
-           display: block;
-           margin-bottom: 8px;
-           font-weight: bold;
-         }
-       }
-       
-       .color-selector select {
-         padding: 8px 15px;
-         border: 1px solid $primary-light;
-         border-radius: 5px;
-         width: 80%;
-         max-width: 250px;
-       }
-       
-       .quantity-selector {
-         .quantity-controls {
-           display: flex;
-           justify-content: center;
-           align-items: center;
-           width: fit-content;
-           margin: 0 auto;
-         }
-         
-         .quantity-btn {
-           width: 36px;
-           height: 36px;
-           background-color: #f0f0f0;
-           border: 1px solid #ddd;
-           font-size: 18px;
-           display: flex;
-           justify-content: center;
-           align-items: center;
-           cursor: pointer;
-         }
-         
-         input[type="number"] {
-           padding: 8px 15px;
-           border: 1px solid $primary-light;
-           border-radius: 5px;
-           width: 80px;
-           text-align: center;
-           
-           &.quantity-input {
-             width: 50px;
-             height: 36px;
-             border: 1px solid #ddd;
-             text-align: center;
-             font-size: 16px;
-             -moz-appearance: textfield;
-             
-             &::-webkit-outer-spin-button,
-             &::-webkit-inner-spin-button {
-               -webkit-appearance: none;
-               margin: 0;
-             }
-           }
-         }
-       }
-       
-       .add-to-cart-btn {
-         padding: 12px 25px;
-         background-color: $primary;
-         color: white;
-         border: none;
-         border-radius: 5px;
-         font-weight: bold;
-         cursor: pointer;
-         transition: background-color 0.2s;
-         font-size: 14px;
-         text-transform: uppercase;
-         letter-spacing: 1px;
-         margin-top: 20px;
-         
-         &:hover {
-           background-color: $primary-dark;
-         }
-       }
-     }
-   }
-   
-   /* ==========================================================================
-      10. Visualización del Carrito
+      9. Visualización del Carrito
       ========================================================================== */
    /* Popup del carrito */
    .cart-popup {
@@ -744,7 +540,7 @@
    }
    
    /* ==========================================================================
-      11. Login y Registro
+      10. Login y Registro
       ========================================================================== */
    .verlogin {
      width: 300px;
@@ -788,7 +584,7 @@
    }
    
    /* ==========================================================================
-      12. Checkout
+      11. Checkout
       ========================================================================== */
    .vercheckout {
      flex-direction: column;
@@ -872,7 +668,7 @@
    }
    
    /* ==========================================================================
-      13. Perfil de Usuario
+      12. Perfil de Usuario
       ========================================================================== */
    #divdatos {
      table {
@@ -1001,7 +797,7 @@
    }
    
    /* ==========================================================================
-      14. Admin
+      13. Admin
       ========================================================================== */
    #divadmin {
      input[type='button'], input[type='submit'] {
@@ -1099,7 +895,7 @@
    }
    
    /* ==========================================================================
-      15. Modales y Utilitarios
+      14. Modales y Utilitarios
       ========================================================================== */
    #cerrar {
      border: none;
@@ -1151,7 +947,7 @@
    }
    
    /* ==========================================================================
-      16. Footer
+      15. Footer
       ========================================================================== */
    footer {
      background-color: rgb(86, 79, 79);
@@ -1166,7 +962,7 @@
    }
    
    /* ==========================================================================
-      17. Animaciones
+      16. Animaciones
       ========================================================================== */
    @keyframes fadeIn {
      from {
@@ -1189,7 +985,7 @@
    }
    
    /* ==========================================================================
-   18. Responsive
+   17. Responsive
    ========================================================================== */
 @media (max-width: 768px) {
   #articulos .articulo {
@@ -1245,12 +1041,6 @@
   .home-component h1,
   .left-aligned-title {
     font-size: 4em !important;
-  }
-  
-  /* Ajustes para el popup de productos */
-  .product-popup {
-    width: 90%;
-    padding: 15px;
   }
   
   /* Ajustes para la visualización del carrito */
