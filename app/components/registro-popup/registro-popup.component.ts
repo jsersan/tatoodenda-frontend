@@ -22,7 +22,7 @@ export class RegistroPopupComponent implements OnInit {
   submitted = false;
   showPassword = false;
 
-  private readonly apiKey = 'AIzaSyDY3YQ6aNb7YXoz13RIxq5fVyzdbak7sQ0';
+  private readonly apiKey = 'API Key de Google';
 
   constructor(
     private formBuilder: FormBuilder,
