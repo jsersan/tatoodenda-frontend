@@ -212,13 +212,13 @@ Commits Semánticos
 
 | Tipo       | Emoji | Descripción         | Ejemplo                                      |
 | ---------- | ----- | ------------------- | -------------------------------------------- |
-| `feat`     | ✨     | Nueva funcionalidad | `✨ feat: añade filtro de búsqueda avanzada`|
+| `feat`     | ✨    | Nueva funcionalidad | `✨ feat: añade filtro de búsqueda avanzada` |
 | `fix`      | 🐛    | Corrección de bug   | `🐛 fix: corrige error en cálculo de total`  |
 | `docs`     | 📚    | Documentación       | `📚 docs: actualiza guía de instalación`     |
 | `style`    | 💄    | Estilo / formato    | `💄 style: mejora estilos del header`        |
 | `refactor` | ♻️    | Refactorización     | `♻️ refactor: simplifica lógica de checkout` |
 | `perf`     | ⚡     | Rendimiento         | `⚡ perf: optimiza carga de imágenes`         |
-| `test`     | ✅     | Tests               | `✅ test: añade tests para OrderService`    |
+| `test`     | ✅    | Tests               | `✅ test: añade tests para OrderService`     |
 | `chore`    | 🔧    | Mantenimiento       | `🔧 chore: actualiza dependencias`           |
 
 
