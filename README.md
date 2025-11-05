@@ -222,18 +222,74 @@ Commits Semánticos
 | `chore`    | 🔧    | Mantenimiento       | `🔧 chore: actualiza dependencias`           |
 
 
-Ejemplo:
 
-git commit -m "✨ feat: implementa carrito de compras persistente"
+---
 
-🤝 Contribuir
+## 🤝 Contribuir
 
-Fork del proyecto
+1. **Fork** [translate:del proyecto]
+2. [translate:Crea una rama]: `git checkout -b feature/AmazingFeature`
+3. **Commit**: `git commit -m '✨ feat: Add amazing feature'`
+4. **Push**: `git push origin feature/AmazingFeature`
+5. **Pull Request**
 
-Crea una rama: git checkout -b feature/AmazingFeature
+---
 
-Commit: git commit -m '✨ feat: Add amazing feature'
+## ❓ FAQ
 
-Push: git push origin feature/AmazingFeature
+### [translate:¿Qué versión de Node.js necesito?]
+Node.js v18+ [translate:es recomendado para máxima compatibilidad.]
 
-Pull Request
+### [translate:¿Cómo configuro el backend?]
+[translate:Este proyecto requiere el backend de TatooDenda. Consulta el repositorio] [tatoodenda-backend](https://github.com/jsersan/tatoodenda-backend) [translate:para más información.]
+
+### [translate:¿Puedo usar este proyecto comercialmente?]
+[translate:Sí, está bajo licencia MIT. Puedes usarlo libremente.]
+
+---
+
+## 📄 Licencia
+
+[translate:Este proyecto está bajo la Licencia MIT. Consulta el archivo] [LICENSE](LICENSE) [translate:para más detalles.]
+
+---
+
+## 📧 Contacto
+
+**[translate:¿Tienes preguntas o sugerencias?]**
+
+- 📧 Email: jsersan@example.com
+- 🐙 GitHub: [@jsersan](https://github.com/jsersan)
+- 💼 LinkedIn: [jsersan](https://linkedin.com/in/jsersan)
+- 🌐 Website: [tatoodenda.com](https://tatoodenda.com)
+
+---
+
+## 👤 Autor
+
+<div align="center">
+
+### **jsersan**
+
+[![GitHub followers](https://img.shields.io/github/followers/jsersan?label=Follow&style=social)](https://github.com/jsersan)
+[![GitHub stars](https://img.shields.io/github/stars/jsersan/tatoodenda-frontend?style=social)](https://github.com/jsersan/tatoodenda-frontend)
+
+**Full-Stack Developer | Angular Specialist | E-Commerce Solutions**
+
+[translate:Desarrollador apasionado por crear experiencias web modernas y escalables. Especializado en Angular, TypeScript y arquitecturas de aplicaciones empresariales.]
+
+[🔗 Portfolio](https://jsersan.dev) • [💻 GitHub](https://github.com/jsersan) • [📧 Contacto](mailto:jsersan@example.com)
+
+</div>
+
+---
+
+<div align="center">
+
+[translate:Hecho con] ❤️ [translate:por] [jsersan](https://github.com/jsersan)
+
+⭐ [translate:Si este proyecto te resulta útil, considera darle una estrella en GitHub]
+
+[🔝 [translate:Volver arriba]](#-tatoodenda---e-commerce-platform)
+
+</div>
