@@ -97,3 +97,143 @@
 
 La estructura del proyecto sigue las **mejores prácticas de Angular** y está organizada de forma modular:
 
+tatoodenda-frontend/
+│
+├── src/
+│ ├── app/
+│ │ ├── components/ # Componentes reutilizables
+│ │ ├── services/ # Servicios de negocio
+│ │ ├── models/ # Interfaces y tipos
+│ │ ├── guards/ # Guards de rutas
+│ │ ├── pages/ # Páginas principales
+│ │ └── utils/ # Utilidades y helpers
+│ │
+│ ├── assets/ # Recursos estáticos
+│ ├── environments/ # Configuración por entorno
+│ └── styles/ # Estilos globales
+│
+├── angular.json
+├── package.json
+├── tsconfig.json
+└── README.md
+
+
+### Patrón de Arquitectura
+
+- **Componentes** → Capa de presentación (UI)  
+- **Services** → Lógica de negocio y comunicación con API  
+- **Models** → Tipos e interfaces  
+- **Guards** → Control de acceso  
+- **Observables** → Estado reactivo  
+
+---
+
+## 📦 Instalación
+
+### Requisitos Previos
+- Node.js v18+  
+- npm  
+- Angular CLI v16+  
+- Git  
+
+### Pasos
+
+```bash
+# Clonar repositorio
+git clone https://github.com/jsersan/tatoodenda-frontend.git
+cd tatoodenda-frontend
+
+# Instalar dependencias
+npm install
+
+# Configurar entorno
+cp src/environments/environment.example.ts src/environments/environment.ts
+nano src/environments/environment.ts
+
+# Iniciar servidor
+ng serve
+
+Abre http://localhost:4200
+
+⚙️ Configuración
+
+src/environments/environment.ts:
+
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000/api',
+};
+
+src/environments/environment.prod.ts:
+
+export const environment = {
+  production: true,
+  apiUrl: 'https://api.tatoodenda.com',
+};
+
+| Comando                               | Descripción             |
+| ------------------------------------- | ----------------------- |
+| `ng serve`                            | Inicia servidor local   |
+| `ng build`                            | Compila el proyecto     |
+| `ng build --configuration production` | Build optimizado        |
+| `ng test`                             | Ejecuta tests unitarios |
+| `ng e2e`                              | Tests end-to-end        |
+| `ng lint`                             | Análisis de código      |
+| `ng generate component <name>`        | Crea un componente      |
+| `ng generate service <name>`          | Crea un servicio        |
+| `ng generate module <name>`           | Crea un módulo          |
+
+
+Ejemplo de componente:
+
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '@services/product.service';
+import { Product } from '@models/product.model';
+import { Observable } from 'rxjs';
+
+@Component({
+  selector: 'app-product-list',
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss']
+})
+export class ProductListComponent implements OnInit {
+  products$: Observable<Product[]>;
+
+  constructor(private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.products$ = this.productService.getProducts();
+  }
+}
+
+Convenciones de código:
+
+Commits Semánticos
+
+| Tipo       | Emoji | Descripción         | Ejemplo                                      |
+| ---------- | ----- | ------------------- | -------------------------------------------- |
+| `feat`     | ✨     | Nueva funcionalidad | `✨ feat: añade filtro de búsqueda avanzada`|
+| `fix`      | 🐛    | Corrección de bug   | `🐛 fix: corrige error en cálculo de total`  |
+| `docs`     | 📚    | Documentación       | `📚 docs: actualiza guía de instalación`     |
+| `style`    | 💄    | Estilo / formato    | `💄 style: mejora estilos del header`        |
+| `refactor` | ♻️    | Refactorización     | `♻️ refactor: simplifica lógica de checkout` |
+| `perf`     | ⚡     | Rendimiento         | `⚡ perf: optimiza carga de imágenes`         |
+| `test`     | ✅     | Tests               | `✅ test: añade tests para OrderService`    |
+| `chore`    | 🔧    | Mantenimiento       | `🔧 chore: actualiza dependencias`           |
+
+
+Ejemplo:
+
+git commit -m "✨ feat: implementa carrito de compras persistente"
+
+🤝 Contribuir
+
+Fork del proyecto
+
+Crea una rama: git checkout -b feature/AmazingFeature
+
+Commit: git commit -m '✨ feat: Add amazing feature'
+
+Push: git push origin feature/AmazingFeature
+
+Pull Request
