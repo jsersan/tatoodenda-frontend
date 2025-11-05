@@ -222,74 +222,24 @@ Commits Semánticos
 | `chore`    | 🔧    | Mantenimiento       | `🔧 chore: actualiza dependencias`           |
 
 
+## 🛠️ Scripts disponibles
 
----
-
-## 🤝 Contribuir
-
-1. **Fork** [translate:del proyecto]
-2. [translate:Crea una rama]: `git checkout -b feature/AmazingFeature`
-3. **Commit**: `git commit -m '✨ feat: Add amazing feature'`
-4. **Push**: `git push origin feature/AmazingFeature`
-5. **Pull Request**
-
----
-
-## ❓ FAQ
-
-### [translate:¿Qué versión de Node.js necesito?]
-Node.js v18+ [translate:es recomendado para máxima compatibilidad.]
-
-### [translate:¿Cómo configuro el backend?]
-[translate:Este proyecto requiere el backend de TatooDenda. Consulta el repositorio] [tatoodenda-backend](https://github.com/jsersan/tatoodenda-backend) [translate:para más información.]
-
-### [translate:¿Puedo usar este proyecto comercialmente?]
-[translate:Sí, está bajo licencia MIT. Puedes usarlo libremente.]
-
----
+- `npm run build`: Compila el código TypeScript
+- `npm start`: Inicia la aplicación en modo producción
+- `npm run dev`: Inicia la aplicación en modo desarrollo con reinicio automático
+- `npm run lint`: Verifica el código con ESLint
+- `npm test`: Ejecuta pruebas unitarias
 
 ## 📄 Licencia
 
-[translate:Este proyecto está bajo la Licencia MIT. Consulta el archivo] [LICENSE](LICENSE) [translate:para más detalles.]
+Este proyecto está bajo la Licencia ISC. Consulta el archivo LICENSE para más detalles.
 
----
+## 🤝 Contribuir
 
-## 📧 Contacto
+Las contribuciones son bienvenidas. Por favor, abre un issue o una pull request para sugerir cambios o mejoras.
 
-**[translate:¿Tienes preguntas o sugerencias?]**
-
-- 📧 Email: jsersan@example.com
-- 🐙 GitHub: [@jsersan](https://github.com/jsersan)
-- 💼 LinkedIn: [jsersan](https://linkedin.com/in/jsersan)
-- 🌐 Website: [tatoodenda.com](https://tatoodenda.com)
-
----
-
-## 👤 Autor
-
-<div align="center">
-
-### **jsersan**
-
-[![GitHub followers](https://img.shields.io/github/followers/jsersan?label=Follow&style=social)](https://github.com/jsersan)
-[![GitHub stars](https://img.shields.io/github/stars/jsersan/tatoodenda-frontend?style=social)](https://github.com/jsersan/tatoodenda-frontend)
-
-**Full-Stack Developer | Angular Specialist | E-Commerce Solutions**
-
-[translate:Desarrollador apasionado por crear experiencias web modernas y escalables. Especializado en Angular, TypeScript y arquitecturas de aplicaciones empresariales.]
-
-[🔗 Portfolio](https://jsersan.dev) • [💻 GitHub](https://github.com/jsersan) • [📧 Contacto](mailto:jsersan@example.com)
-
-</div>
-
----
-
-<div align="center">
-
-[translate:Hecho con] ❤️ [translate:por] [jsersan](https://github.com/jsersan)
-
-⭐ [translate:Si este proyecto te resulta útil, considera darle una estrella en GitHub]
-
-[🔝 [translate:Volver arriba]](#-tatoodenda---e-commerce-platform)
-
-</div>
+1. Fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
+3. Commit de tus cambios (`git commit -m 'Add some amazing feature'`)
+4. Push a la rama (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
