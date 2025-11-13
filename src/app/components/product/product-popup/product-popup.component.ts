@@ -7,9 +7,10 @@ import { CartService } from '../../../services/cart.service';
 import { ProductImageHelper } from '../../../helpers/product-image-helper';
 
 @Component({
-  selector: 'app-product-popup',
-  templateUrl: './product-popup.component.html',
-  styleUrls: ['./product-popup.component.scss']
+    selector: 'app-product-popup',
+    templateUrl: './product-popup.component.html',
+    styleUrls: ['./product-popup.component.scss'],
+    standalone: false
 })
 export class ProductPopupComponent implements OnInit, OnDestroy {
   currentProduct: Product | null = null;

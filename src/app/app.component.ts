@@ -1,19 +1,21 @@
-// app.component.ts - ARCHIVO COMPLETO
+// app.component.ts - OPTIMIZADO PARA RENDER
 
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { LoginPopupService, LoginPopupState } from './services/login-popup.service';
+import { KeepAliveService } from './services/keep-alive.service'; // ✅ NUEVO
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements OnInit {
   title = 'ecommerce-app';
 
-  // ✅ Control de popups
+  // Control de popups
   showLoginPopup = false;
   loginReturnUrl = '';
   loginFromCheckout = false;
@@ -21,12 +23,16 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private loginPopupService: LoginPopupService
+    private loginPopupService: LoginPopupService,
+    private keepAliveService: KeepAliveService // ✅ NUEVO
   ) {
     console.log('🚀 AppComponent inicializado');
   }
 
   ngOnInit(): void {
+    // ✅ CRÍTICO: Iniciar keep-alive inmediatamente
+    this.keepAliveService.startKeepAlive();
+
     // Suscribirse al servicio de login popup con tipo explícito
     this.loginPopupService.loginPopupState$.subscribe((state: LoginPopupState) => {
       console.log('📢 Estado de login popup cambió:', state);

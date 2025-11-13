@@ -6,15 +6,16 @@ import { Router } from '@angular/router'
 import { CartService } from '../../services/cart.service'
 import { AuthService } from '../../services/auth.service'
 import { ProductService } from '../../services/product.service'
-import { Order, OrderLine } from 'src/app/models/order'
-import { CartItem } from 'src/app/models/order'
-import { OrderService } from 'src/app/services/order.service'
+import { Order, OrderLine } from '../../models/order'
+import { CartItem } from '../../models/order'
+import { OrderService } from '../../services/order.service'
 import Swal from 'sweetalert2'
 
 @Component({
-  selector: 'app-checkout',
-  templateUrl: './checkout.component.html',
-  styleUrls: ['./checkout.component.scss']
+    selector: 'app-checkout',
+    templateUrl: './checkout.component.html',
+    styleUrls: ['./checkout.component.scss'],
+    standalone: false
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
   checkoutForm: FormGroup

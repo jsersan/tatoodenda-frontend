@@ -8,9 +8,10 @@ import { User } from '../../../models/user'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.css'],
+    standalone: false
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   // Propiedades del componente existentes
@@ -217,14 +218,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   /**
    * Carga las categorías desde el servicio
    */
-  loadCategories (): void {
+  loadCategories(): void {
     this.categoryService.getCategories().subscribe({
       next: categories => {
-        console.log('Categorías cargadas:', categories)
-        this.categories = categories
+        console.log('✅ Categorías cargadas:', categories);
+        this.categories = categories;
       },
-      error: error => console.error('Error loading categories', error)
-    })
+      error: error => {
+        console.error('❌ Error loading categories', error);
+        console.error('   Status:', error.status);
+        console.error('   Message:', error.message);
+        console.error('   URL:', error.url);
+      }
+    });
   }
 
   /**

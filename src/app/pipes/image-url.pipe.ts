@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'imageUrl'
+    name: 'imageUrl',
+    standalone: false
 })
 export class ImageUrlPipe implements PipeTransform {
   transform(imagen: string, carpetaimg?: string, categoriaId?: number): string {

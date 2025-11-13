@@ -8,9 +8,10 @@ import { filter, map } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-product-list',
-  templateUrl: './product-list.component.html',
-  styleUrls: []
+    selector: 'app-product-list',
+    templateUrl: './product-list.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class ProductListComponent implements OnInit {
   // Array para almacenar los productos a mostrar

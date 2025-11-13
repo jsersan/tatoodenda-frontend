@@ -14,9 +14,10 @@ import Swal from 'sweetalert2';
 import { PasswordConfirmModalComponent } from '../../password-confirm-modal/password-confirm-modal';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+    selector: 'app-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss'],
+    standalone: false
 })
 export class ProfileComponent implements OnInit {
   // ✅ Referencia al modal de confirmación de contraseña

@@ -3,16 +3,17 @@ import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 import { LoginPopupService } from '../../services/login-popup.service';
-import { OrderLine } from 'src/app/models/order';
+import { OrderLine } from '../../models/orderline';
 import { CartItem } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
 import Swal from 'sweetalert2';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-cart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.scss']
+    selector: 'app-cart',
+    templateUrl: './cart.component.html',
+    styleUrls: ['./cart.component.scss'],
+    standalone: false
 })
 export class CartComponent implements OnInit, OnDestroy, AfterViewInit {
   // Array para almacenar los items del carrito

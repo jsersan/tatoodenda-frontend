@@ -5,10 +5,11 @@ import { CartService } from '../../../services/cart.service';
 import { Product } from '../../../models/product';
 
 @Component({
-  selector: 'app-product-detail',
-  templateUrl: './product-detail.component.html',
-  // Eliminamos la referencia al archivo SCSS si no existe
-  styleUrls: []
+    selector: 'app-product-detail',
+    templateUrl: './product-detail.component.html',
+    // Eliminamos la referencia al archivo SCSS si no existe
+    styleUrls: [],
+    standalone: false
 })
 export class ProductDetailComponent implements OnInit {
   // Datos del producto

@@ -8,9 +8,10 @@ import { User } from '../../models/user'
 import Swal from 'sweetalert2'
 
 @Component({
-  selector: 'app-historial-pedidos',
-  templateUrl: './historial-pedidos.component.html',
-  styleUrls: ['./historial-pedidos.component.scss']
+    selector: 'app-historial-pedidos',
+    templateUrl: './historial-pedidos.component.html',
+    styleUrls: ['./historial-pedidos.component.scss'],
+    standalone: false
 })
 export class HistorialPedidosComponent implements OnInit, OnDestroy {
   pedidos: (Order & { expanded?: boolean })[] = []

@@ -1,14 +1,15 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-registro-popup',
-  templateUrl: './registro-popup.component.html',
-  styleUrls: ['./registro-popup.component.scss']
+    selector: 'app-registro-popup',
+    templateUrl: './registro-popup.component.html',
+    styleUrls: ['./registro-popup.component.scss'],
+    standalone: false
 })
 export class RegistroPopupComponent implements OnInit {
   @Input() isVisible = false;

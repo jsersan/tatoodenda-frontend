@@ -1,14 +1,15 @@
 {
-  "name": "tatoodenda-backend",
+  "name": "tatoodenda-frontend",
   "version": "1.0.0",
-  "description": "Backend para la tienda online Tatoodenda",
+  "description": "Frontend para la tienda online Tatoodenda",
   "main": "dist/server.js",
   "scripts": {
-    "ng": "ng",
     "build": "ng build",
+    "build:prod": "ng build --configuration production --base-href /angular/tatoodenda/",
     "start": "ng serve",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
   },
   "keywords": [
     "ecommerce",
@@ -20,14 +21,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@angular/animations": "^16.2.12",
-    "@angular/common": "^16.2.12",
-    "@angular/compiler": "^16.2.12",
-    "@angular/core": "^16.2.12",
-    "@angular/forms": "^16.2.12",
-    "@angular/platform-browser": "^16.2.12",
-    "@angular/platform-browser-dynamic": "^16.2.12",
-    "@angular/router": "^16.2.12",
+    "@angular/animations": "^19.2.15",
+    "@angular/common": "^19.2.15",
+    "@angular/compiler": "^19.2.15",
+    "@angular/core": "^19.2.15",
+    "@angular/forms": "^19.2.15",
+    "@angular/platform-browser": "^19.2.15",
+    "@angular/platform-browser-dynamic": "^19.2.15",
+    "@angular/router": "^19.2.15",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.8",
     "cors": "^2.8.5",
@@ -37,15 +38,16 @@
     "jspdf": "^2.5.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.2.0",
-    "rxjs": "~7.8.0",
+    "rxjs": "^7.8.1",
     "sequelize": "^6.30.0",
     "sweetalert2": "^11.26.3",
-    "tslib": "^2.8.1",
-    "zone.js": "^0.13.3"
+    "tslib": "^2.7.0",
+    "zone.js": "^0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.16",
-    "@angular/cli": "^16.2.16",
+    "@angular-devkit/build-angular": "^19.2.18",
+    "@angular/cli": "^19.2.18",
+    "@angular/compiler-cli": "^19.2.15",
     "@types/bcryptjs": "^2.4.2",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
@@ -59,6 +61,6 @@
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.3"
+    "typescript": "^5.5.4"
   }
 }

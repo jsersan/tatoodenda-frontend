@@ -4,9 +4,11 @@ import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product';
 
 @Component({
-  selector: 'app-search-results',
-  templateUrl: './search-results.component.html',
-  styleUrls: ['./search-results.component.scss']  // ✅ CORREGIDO: Cargar el archivo SCSS
+    selector: 'app-search-results',
+    templateUrl: './search-results.component.html',
+    styleUrls: ['./search-results.component.scss'] // ✅ CORREGIDO: Cargar el archivo SCSS
+    ,
+    standalone: false
 })
 export class SearchResultsComponent implements OnInit {
   // Array para almacenar los productos encontrados

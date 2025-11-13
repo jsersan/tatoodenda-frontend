@@ -1,4 +1,4 @@
-<!-- login-popup.component.html -->
+<!-- login-popup.component.html - OPTIMIZADO -->
 <div class="login-popup-overlay" 
      [class.active]="isVisible" 
      (click)="onOverlayClick($event)"
@@ -12,7 +12,13 @@
     
     <!-- Título del popup -->
     <div class="login-popup-header">
-      <h2 class="login-title" style="font-family: 'Montserrat', Arial, sans-serif !important; font-style: normal !important; font-weight: 600 !important;">Login</h2>
+      <h2 class="login-title">Login</h2>
+    </div>
+    
+    <!-- ✅ NUEVO: Mensaje de pre-calentamiento -->
+    <div class="warm-up-message" *ngIf="isWarmingUp">
+      <div class="spinner"></div>
+      <p>{{ warmUpMessage }}</p>
     </div>
     
     <!-- Formulario de login -->
@@ -30,10 +36,10 @@
             placeholder="Introduce tu usuario"
             required
             autocomplete="username"
-            [disabled]="isLoading">
+            [disabled]="isLoading || isWarmingUp">
         </div>
         
-        <!-- Campo Contraseña - CORREGIDO -->
+        <!-- Campo Contraseña -->
         <div class="form-group">
           <label for="contrasena">Contraseña:</label>
           <input 
@@ -45,7 +51,7 @@
             placeholder="Introduce tu contraseña"
             required
             autocomplete="current-password"
-            [disabled]="isLoading">
+            [disabled]="isLoading || isWarmingUp">
         </div>
         
         <!-- Mensaje de error -->
@@ -54,15 +60,21 @@
           {{ errorMessage }}
         </div>
         
+        <!-- ✅ Mensaje informativo sobre Render -->
+        <div class="info-message" *ngIf="isLoading && fromCheckout">
+          <i class="info-icon">ℹ️</i>
+          <span>Si es tu primer acceso, el servidor puede tardar 30-60 segundos en responder.</span>
+        </div>
+        
         <!-- Botón de iniciar sesión -->
         <button 
           type="submit" 
           class="login-btn"
-          [disabled]="isLoading || !usuario || !contrasena">
-          <span *ngIf="!isLoading">INICIAR SESIÓN</span>
-          <span *ngIf="isLoading" class="loading-text">
+          [disabled]="isLoading || !usuario || !contrasena || isWarmingUp">
+          <span *ngIf="!isLoading && !isWarmingUp">INICIAR SESIÓN</span>
+          <span *ngIf="isLoading || isWarmingUp" class="loading-text">
             <span class="spinner"></span>
-            Cargando...
+            {{ isWarmingUp ? 'Preparando...' : 'Iniciando sesión...' }}
           </span>
         </button>
       </form>

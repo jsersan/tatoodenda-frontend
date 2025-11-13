@@ -5,9 +5,10 @@ import { Category } from '../../../models/category';
 import { CategoryService } from '../../../services/category.service';
 
 @Component({
-  selector: 'app-category-manager',
-  templateUrl: './category-manager.component.html',
-  styleUrls: []
+    selector: 'app-category-manager',
+    templateUrl: './category-manager.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class CategoryManagerComponent implements OnInit {
   categories: Category[] = [];

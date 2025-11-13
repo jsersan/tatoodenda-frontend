@@ -1,17 +1,17 @@
-// src/app/app.module.ts - ARCHIVO COMPLETO ACTUALIZADO
+// src/app/app.module.ts - CON KEEP-ALIVE SERVICE
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 
-// Importar los interceptors
+// Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 
-// Componentes principales y compartidos
+// Componentes
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
@@ -30,8 +30,6 @@ import { OrderLineComponent } from './components/orderline/orderline.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { HeaderComponent } from './components/shared/header/header.component';
 import { ImageUrlPipe } from './pipes/image-url.pipe';
-
-// ✅ Componentes modales y popups
 import { LoginPopupComponent } from './components/login-popup/login-popup.component';
 import { RegistroPopupComponent } from './components/registro-popup/registro-popup.component';
 import { HistorialPedidosComponent } from './components/historial-pedidos/historial-pedidos.component';
@@ -39,6 +37,7 @@ import { PasswordConfirmModalComponent } from './components/password-confirm-mod
 
 // Servicios
 import { PdfService } from './services/pdf.service';
+import { KeepAliveService } from './services/keep-alive.service'; // ✅ NUEVO
 
 @NgModule({
   declarations: [
@@ -60,27 +59,27 @@ import { PdfService } from './services/pdf.service';
     OrderLineComponent,
     BannerComponent,
     HeaderComponent,
-    // ✅ Modales y popups
     LoginPopupComponent,
     RegistroPopupComponent,
     HistorialPedidosComponent,
     PasswordConfirmModalComponent
   ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule
   ],
   providers: [
-    // ✅ Interceptors (el orden importa: primero Auth, luego Error)
+    // Interceptors
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     // Servicios
-    PdfService
-  ],
-  bootstrap: [AppComponent]
+    PdfService,
+    KeepAliveService, // ✅ NUEVO
+    provideHttpClient(withInterceptorsFromDi())
+  ]
 })
 export class AppModule { }

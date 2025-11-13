@@ -5,9 +5,10 @@ import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user';
 
 @Component({
-  selector: 'app-password-confirm-modal',
-  templateUrl: './password-confirm-modal.html',
-  styleUrls: ['./password-confirm-modal.scss']
+    selector: 'app-password-confirm-modal',
+    templateUrl: './password-confirm-modal.html',
+    styleUrls: ['./password-confirm-modal.scss'],
+    standalone: false
 })
 export class PasswordConfirmModalComponent implements OnInit, OnDestroy {
   @Output() confirmed = new EventEmitter<string>();

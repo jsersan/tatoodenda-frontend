@@ -6,9 +6,10 @@ import { Product } from '../../../models/product';
 import { Category } from '../../../models/category';
 
 @Component({
-  selector: 'app-product-manager',
-  templateUrl: './product-manager.component.html',
-  styleUrls: []
+    selector: 'app-product-manager',
+    templateUrl: './product-manager.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class ProductManagerComponent implements OnInit {
   // Formularios para productos (nombres actualizados para coincidir con HTML)

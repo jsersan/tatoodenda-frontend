@@ -8,6 +8,7 @@ $background: white;
 $default-font: 'Montserrat', sans-serif;
 $error-color: #dc3545;
 $success-color: #2e7d32;
+$info-color: #2196F3;
 
 /* CRÍTICO: Overlay del popup con z-index muy alto */
 .login-popup-overlay {
@@ -210,6 +211,97 @@ $success-color: #2e7d32;
     transform: translateY(0);
   }
 }
+
+/* ✅ NUEVO: Mensaje de pre-calentamiento */
+.warm-up-message {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+  color: $info-color !important;
+  padding: 15px 20px !important;
+  border-radius: 8px !important;
+  font-size: 0.95em !important;
+  border-left: 4px solid $info-color !important;
+  margin: 15px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  animation: slideInInfo 0.3s ease !important;
+  
+  .spinner {
+    width: 20px !important;
+    height: 20px !important;
+    border: 3px solid rgba($info-color, 0.3) !important;
+    border-top: 3px solid $info-color !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+    flex-shrink: 0 !important;
+  }
+  
+  p {
+    margin: 0 !important;
+    font-weight: 500 !important;
+  }
+}
+
+/* ✅ NUEVO: Mensaje informativo */
+.info-message {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+  color: #f57c00 !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  font-size: 0.85em !important;
+  border-left: 4px solid #ff9800 !important;
+  margin: 10px 0 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  animation: slideInInfo 0.3s ease !important;
+  
+  .info-icon {
+    font-size: 1.1em !important;
+    flex-shrink: 0 !important;
+  }
+  
+  span {
+    line-height: 1.4 !important;
+  }
+}
+
+@keyframes slideInInfo {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Spinner mejorado para loading */
+.loading-text .spinner {
+  width: 16px !important;
+  height: 16px !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  border-top: 2px solid white !important;
+  border-radius: 50% !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Ajustes responsivos para mensajes nuevos */
+@media screen and (max-width: 480px) {
+  .warm-up-message,
+  .info-message {
+    padding: 10px 12px !important;
+    font-size: 0.8em !important;
+    margin: 10px 15px !important;
+  }
+}
+
 
 /* Botón de login - GRIS CORPORATIVO */
 .login-btn {

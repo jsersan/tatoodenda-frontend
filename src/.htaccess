@@ -1,0 +1,24 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Establecer la base
+  RewriteBase /angular/tatoodenda/
+  
+  # No reescribir archivos existentes
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Redirigir todo a index.html
+  RewriteRule ^.*$ /angular/tatoodenda/index.html [L]
+</IfModule>
+
+# Configuración adicional para Angular
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css .css
+</IfModule>
+
+# Habilitar CORS si es necesario
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>

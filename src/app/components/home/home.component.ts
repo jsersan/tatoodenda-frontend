@@ -5,8 +5,9 @@ import { Product } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html'
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    standalone: false
 })
 export class HomeComponent implements OnInit {
   // Array para almacenar todos los productos

@@ -495,16 +495,16 @@ export class ProductImageHelper {
       .toLowerCase()
       .trim();
   
-    console.log('🖼️ getProductImageSrc:', {
+    /* console.log('🖼️ getProductImageSrc:', {
       nombre,
       nombreOriginal: product.nombre,
       selectedColor,
       carpetaimg: product.carpetaimg
-    });
+    });*/
   
     // ✅ REGLA ESPECIAL 1: Plug con corazón - HARDCODED
     if (nombre.includes('plug con corazon') || nombre.includes('plug con corazón')) {
-      console.log('🎯 PLUG CON CORAZÓN detectado');
+      // console.log('🎯 PLUG CON CORAZÓN detectado');
       return 'assets/images/dilatador/plug/plug-dobles/caoba.jpg';
     }
   
@@ -515,33 +515,33 @@ export class ProductImageHelper {
     // ESTRATEGIA 1: Buscar configuración específica PRIMERO
     const productConfig = this.findProductConfig(nombre);
     if (productConfig) {
-      console.log('✅ Config encontrada:', productConfig.folder);
+      // console.log('✅ Config encontrada:', productConfig.folder);
       const imagePath = this.getImagePathForProduct(productConfig, selectedColor, nombre);
-      console.log('✅ Ruta final:', imagePath);
+      // console.log('✅ Ruta final:', imagePath);
       return imagePath;
     }
   
     // ESTRATEGIA 2: Buscar por palabras clave
     const keywordConfig = this.findByKeywords(nombre);
     if (keywordConfig) {
-      console.log('✅ Keyword config:', keywordConfig.folder);
+      // console.log('✅ Keyword config:', keywordConfig.folder);
       const imagePath = this.getImagePathForProduct(keywordConfig, selectedColor, nombre);
-      console.log('✅ Ruta final:', imagePath);
+      // console.log('✅ Ruta final:', imagePath);
       return imagePath;
     }
   
     // ESTRATEGIA 3: Buscar por tipo
     const typeConfig = this.findByProductType(nombre);
     if (typeConfig) {
-      console.log('✅ Type config:', typeConfig.folder);
+      // console.log('✅ Type config:', typeConfig.folder);
       const imagePath = this.getImagePathForProduct(typeConfig, selectedColor, nombre);
-      console.log('✅ Ruta final:', imagePath);
+      // console.log('✅ Ruta final:', imagePath);
       return imagePath;
     }
   
     // ✅ SOLO SI NO SE ENCONTRÓ NADA y es exactamente "plug", usar fallback de plug genérico
     if (nombre === "plug") {
-      console.log('🎯 PLUG GENÉRICO detectado como último recurso');
+      // console.log('🎯 PLUG GENÉRICO detectado como último recurso');
       return 'assets/images/dilatador/plug/plug-simple/negro.jpg';
     }
   
@@ -564,7 +564,7 @@ export class ProductImageHelper {
   
     // ✅ REGLA ESPECIAL: Plug con corazón
     if (nombre.includes('plug con corazon') || nombre.includes('plug con corazón')) {
-      console.log('🎯 Retornando solo [caoba]');
+      // console.log('🎯 Retornando solo [caoba]');
       return ['caoba'];
     }
   
@@ -891,7 +891,7 @@ private static getImagePathForProduct(
     
     if (colorsLower.includes(colorLower)) {
       const imagePath = `assets/images/${folder}/${colorLower}.jpg`;
-      console.log('🎨 Color seleccionado:', imagePath);
+      // console.log('🎨 Color seleccionado:', imagePath);
       return imagePath;
     }
   }
@@ -903,7 +903,7 @@ private static getImagePathForProduct(
     
     if (colorsLower.includes(fallbackLower)) {
       const imagePath = `assets/images/${folder}/${fallbackLower}.jpg`;
-      console.log('🔄 Usando fallback:', imagePath);
+      // console.log('🔄 Usando fallback:', imagePath);
       return imagePath;
     }
   }
@@ -912,7 +912,7 @@ private static getImagePathForProduct(
   if (colors.length > 0) {
     const firstColor = colors[0].toLowerCase();
     const imagePath = `assets/images/${folder}/${firstColor}.jpg`;
-    console.log('📌 Usando primer color:', imagePath);
+    // console.log('📌 Usando primer color:', imagePath);
     return imagePath;
   }
 

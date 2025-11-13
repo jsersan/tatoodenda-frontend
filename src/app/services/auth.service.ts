@@ -1,192 +1,270 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { User } from '../models/user';
-import { Router } from '@angular/router';
+// src/app/services/auth.service.ts - VERSIÓN CORREGIDA
 
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+import { User } from '../models/user'; // ✅ USAR EL MODELO UNIFICADO
+
+/**
+ * Servicio de autenticación
+ * Maneja login, logout y gestión del usuario actual
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/users`;
+  // ✅ BehaviorSubject para el usuario actual
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
-  constructor(private http: HttpClient, private router: Router) {
-    console.log('🔧 AuthService inicializado');
-    console.log('📍 API URL:', this.apiUrl);
-    
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    // Inicializar con el usuario del localStorage si existe
     const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    
+    this.currentUserSubject = new BehaviorSubject<User | null>(user);
     this.currentUser = this.currentUserSubject.asObservable();
     
-    if (storedUser) {
-      console.log('👤 Usuario restaurado del localStorage:', JSON.parse(storedUser));
-    }
+    console.log('🔐 AuthService inicializado con usuario:', user?.username || 'ninguno');
   }
 
+  /**
+   * Obtener el valor actual del usuario
+   */
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
+  /**
+   * Iniciar sesión
+   */
   login(username: string, password: string): Observable<User> {
-    console.log('🚀 Intentando login para usuario:', username);
-    console.log('📡 URL de login:', `${this.apiUrl}/login`);
+    console.log('🔐 Iniciando login para:', username);
     
-    const loginData = { username, password };
-    console.log('📦 Datos de login:', { username, password: '***' });
+    return this.http.post<any>(`${environment.apiUrl}/users/login`, {
+      username,
+      password
+    }).pipe(
+      tap(response => {
+        console.log('📥 Respuesta del backend:', response);
+      }),
+      map(response => {
+        // ✅ CRÍTICO: Construir el objeto user con TODOS los campos
+        const user: User = {
+          id: response.id,
+          username: response.username,
+          nombre: response.nombre || response.username,
+          email: response.email,
+          direccion: response.direccion || '',
+          ciudad: response.ciudad || '',
+          cp: response.cp || '',
+          role: response.role || 'user',
+          token: response.token
+        };
 
-    return this.http.post<User>(`${this.apiUrl}/login`, loginData)
-      .pipe(
-        map(user => {
-          console.log('✅ Login exitoso, respuesta del servidor:', user);
-          
-          // Guardar en localStorage
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          console.log('💾 Usuario guardado en localStorage');
-          
-          // Actualizar BehaviorSubject
-          this.currentUserSubject.next(user);
-          console.log('🔄 Usuario actualizado en BehaviorSubject');
-          
-          return user;
-        }),
-        catchError(this.handleError('login'))
-      );
-  }
+        console.log('✅ Usuario procesado:', user);
 
-  register(user: any): Observable<User> {
-    console.log('🚀 Intentando registro de usuario:', user.username);
-    console.log('📡 URL de registro:', `${this.apiUrl}/register`);
-    console.log('📦 Datos de registro:', { ...user, password: '***' });
-
-    return this.http.post<User>(`${this.apiUrl}/register`, user)
-      .pipe(
-        map(response => {
-          console.log('✅ Registro exitoso, respuesta del servidor:', response);
-          return response;
-        }),
-        catchError(this.handleError('registro'))
-      );
-  }
-
-  updateUser(user: User): Observable<User> {
-    console.log('🚀 Actualizando usuario:', user.id);
-    console.log('📡 URL de actualización:', `${this.apiUrl}/${user.id}`);
-
-    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user)
-      .pipe(
-        map(updatedUser => {
-          console.log('✅ Usuario actualizado:', updatedUser);
-          
-          if (this.currentUserValue && this.currentUserValue.id === updatedUser.id) {
-            const userToStore = { ...updatedUser };
-            delete userToStore.password;
-            
-            localStorage.setItem('currentUser', JSON.stringify(userToStore));
-            this.currentUserSubject.next(userToStore);
-            console.log('🔄 Usuario actual actualizado');
-          }
-          
-          return updatedUser;
-        }),
-        catchError(this.handleError('actualización de usuario'))
-      );
-  }
-
-  logout() {
-    console.log('👋 Cerrando sesión de usuario');
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/']);
-  }
-
-  isAdmin(): boolean {
-    const isAdminUser = this.currentUserValue?.username === 'admin';
-    console.log('🔐 Verificando si es admin:', isAdminUser);
-    return isAdminUser;
+        // Guardar en localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // Actualizar BehaviorSubject
+        this.currentUserSubject.next(user);
+        
+        console.log('✅ Login completado para:', user.username);
+        
+        return user;
+      }),
+      catchError(error => {
+        console.error('❌ Error en login:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
-   * Obtener el token JWT del usuario actual
-   * AÑADIDO: Para compatibilidad con OrderService
+   * Registrar nuevo usuario
    */
-  getToken(): string | null {
-    const currentUser = this.currentUserValue;
-    if (currentUser && currentUser.token) {
-      console.log('🔑 Token obtenido para usuario:', currentUser.username);
-      return currentUser.token;
+  register(userData: Partial<User>): Observable<User> {
+    console.log('📝 Registrando usuario:', userData.username);
+    
+    return this.http.post<any>(`${environment.apiUrl}/users/register`, userData).pipe(
+      map(response => {
+        const user: User = {
+          id: response.id,
+          username: response.username,
+          nombre: response.nombre || response.username,
+          email: response.email,
+          direccion: response.direccion || '',
+          ciudad: response.ciudad || '',
+          cp: response.cp || '',
+          role: response.role || 'user',
+          token: response.token
+        };
+
+        // Guardar en localStorage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // Actualizar BehaviorSubject
+        this.currentUserSubject.next(user);
+        
+        console.log('✅ Registro completado para:', user.username);
+        
+        return user;
+      }),
+      catchError(error => {
+        console.error('❌ Error en registro:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * ✅ NUEVO: Actualizar usuario
+   */
+  updateUser(userData: Partial<User>): Observable<User> {
+    if (!this.currentUserValue) {
+      return throwError(() => new Error('No hay usuario autenticado'));
     }
-    console.warn('⚠️ No hay token disponible - usuario no autenticado');
-    return null;
+
+    const userId = this.currentUserValue.id;
+    const token = this.currentUserValue.token;
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    console.log('📝 Actualizando usuario:', userId);
+
+    return this.http.put<any>(`${environment.apiUrl}/users/${userId}`, userData, { headers }).pipe(
+      map(response => {
+        const updatedUser: User = {
+          ...this.currentUserValue!,
+          username: response.username || this.currentUserValue!.username,
+          nombre: response.nombre || this.currentUserValue!.nombre,
+          email: response.email || this.currentUserValue!.email,
+          direccion: response.direccion || this.currentUserValue!.direccion,
+          ciudad: response.ciudad || this.currentUserValue!.ciudad,
+          cp: response.cp || this.currentUserValue!.cp
+        };
+
+        // Guardar en localStorage
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // Actualizar BehaviorSubject
+        this.currentUserSubject.next(updatedUser);
+        
+        console.log('✅ Usuario actualizado:', updatedUser.username);
+        
+        return updatedUser;
+      }),
+      catchError(error => {
+        console.error('❌ Error al actualizar usuario:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Cerrar sesión
+   */
+  logout(): void {
+    console.log('🚪 Cerrando sesión');
+    
+    // Eliminar de localStorage
+    localStorage.removeItem('currentUser');
+    
+    // Actualizar BehaviorSubject
+    this.currentUserSubject.next(null);
+    
+    // Navegar al home
+    this.router.navigate(['/']);
+    
+    console.log('✅ Sesión cerrada');
   }
 
   /**
    * Verificar si el usuario está autenticado
-   * AÑADIDO: Para compatibilidad con OrderService
    */
-  isLoggedIn(): boolean {
-    const user = this.currentUserValue;
-    const hasToken = this.getToken();
-    const isAuthenticated = !!(user && hasToken);
-    
-    console.log('🔍 Verificando autenticación:', {
-      hasUser: !!user,
-      hasToken: !!hasToken,
-      isAuthenticated
-    });
-    
-    return isAuthenticated;
+  isAuthenticated(): boolean {
+    return !!this.currentUserValue;
   }
 
-  // Método mejorado para manejo de errores
-  private handleError(operation = 'operation') {
-    return (error: HttpErrorResponse): Observable<never> => {
-      console.error(`❌ Error en ${operation}:`, error);
-      
-      let userMessage = 'Ha ocurrido un error inesperado';
-      
-      if (error.error instanceof ErrorEvent) {
-        // Error del lado del cliente
-        console.error('💻 Error del cliente:', error.error.message);
-        userMessage = 'Error de conexión. Verifica tu internet.';
-      } else {
-        // Error del servidor
-        console.error(`🔥 Error del servidor ${error.status}:`, error.error);
-        
-        switch (error.status) {
-          case 0:
-            userMessage = 'No se puede conectar al servidor. ¿Está el backend ejecutándose?';
-            console.error('🚨 CORS o servidor no accesible en:', this.apiUrl);
-            break;
-          case 401:
-            userMessage = 'Usuario o contraseña incorrectos';
-            break;
-          case 400:
-            userMessage = error.error?.message || 'Datos inválidos';
-            break;
-          case 409:
-            userMessage = 'El usuario ya existe';
-            break;
-          case 500:
-            userMessage = 'Error interno del servidor';
-            break;
-          default:
-            userMessage = `Error del servidor: ${error.status}`;
-        }
-      }
-      
-      console.error('📢 Mensaje para el usuario:', userMessage);
-      
-      // Crear un error con el mensaje para el usuario
-      const clientError = new Error(userMessage);
-      (clientError as any).originalError = error;
-      
-      return throwError(() => clientError);
-    };
+  isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
+  /**
+   * Verificar si el usuario es admin
+   */
+  isAdmin(): boolean {
+    const user = this.currentUserValue;
+    return user?.role === 'admin' || user?.username === 'admin';
+  }
+
+  /**
+   * Obtener el token actual
+   */
+  getToken(): string | null {
+    return this.currentUserValue?.token || null;
+  }
+
+  /**
+   * ✅ NUEVOS MÉTODOS: Recuperación de contraseña
+   */
+  
+  /**
+   * Solicitar recuperación de contraseña
+   */
+  forgotPassword(email: string): Observable<any> {
+    console.log('📧 Solicitando recuperación de contraseña para:', email);
+    
+    return this.http.post<any>(`${environment.apiUrl}/users/forgot-password`, { email }).pipe(
+      tap(response => console.log('✅ Respuesta de forgot-password:', response)),
+      catchError(error => {
+        console.error('❌ Error en forgot-password:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Restablecer contraseña con token
+   */
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    console.log('🔑 Restableciendo contraseña con token');
+    
+    return this.http.post<any>(`${environment.apiUrl}/users/reset-password`, {
+      token,
+      newPassword
+    }).pipe(
+      tap(response => console.log('✅ Contraseña restablecida:', response)),
+      catchError(error => {
+        console.error('❌ Error al restablecer contraseña:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Verificar si un token de recuperación es válido
+   */
+  verifyResetToken(token: string): Observable<any> {
+    console.log('🔍 Verificando token de recuperación');
+    
+    return this.http.get<any>(`${environment.apiUrl}/users/verify-reset-token/${token}`).pipe(
+      tap(response => console.log('✅ Token verificado:', response)),
+      catchError(error => {
+        console.error('❌ Token inválido:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }
+
+export { User };
