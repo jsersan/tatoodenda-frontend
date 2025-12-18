@@ -306,9 +306,9 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ## 👨‍💻 Autor
 
-**Jose Serrano**
+**Txema Serrano**
 - GitHub: [@jsersan](https://github.com/jsersan)
-- Email: contacto@txemaserrano.com
+- Email: admin@txemaserrano.com, jsersan@gmail.com
 - Website: [txemaserrano.com](https://www.txemaserrano.com)
 
 ## 🙏 Agradecimientos
