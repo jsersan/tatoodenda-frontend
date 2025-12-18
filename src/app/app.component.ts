@@ -1,16 +1,17 @@
-// app.component.ts - OPTIMIZADO PARA RENDER
+// app.component.ts - CORREGIDO CON CommonModule
 
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common'; // ✅ AÑADIDO
 import { LoginPopupService, LoginPopupState } from './services/login-popup.service';
-import { KeepAliveService } from './services/keep-alive.service'; // ✅ NUEVO
+import { ApiWakeUpService } from './services/api-wake-up.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false
+  standalone: false // ✅ Mantener como false si usas app.module.ts
 })
 export class AppComponent implements OnInit {
   title = 'ecommerce-app';
@@ -21,19 +22,23 @@ export class AppComponent implements OnInit {
   loginFromCheckout = false;
   showRegistroPopup = false;
 
+  // Estado de wake-up
+  isBackendAwake = false;
+  showLoadingOverlay = true;
+
   constructor(
     private router: Router,
     private loginPopupService: LoginPopupService,
-    private keepAliveService: KeepAliveService // ✅ NUEVO
+    private apiWakeUpService: ApiWakeUpService
   ) {
     console.log('🚀 AppComponent inicializado');
   }
 
   ngOnInit(): void {
-    // ✅ CRÍTICO: Iniciar keep-alive inmediatamente
-    this.keepAliveService.startKeepAlive();
+    // PASO 1: Despertar el backend INMEDIATAMENTE
+    this.wakeUpBackend();
 
-    // Suscribirse al servicio de login popup con tipo explícito
+    // Suscribirse al servicio de login popup
     this.loginPopupService.loginPopupState$.subscribe((state: LoginPopupState) => {
       console.log('📢 Estado de login popup cambió:', state);
       this.showLoginPopup = state.isOpen;
@@ -50,17 +55,55 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Cerrar popup de login
+   * Despertar el backend con feedback visual
    */
+  private wakeUpBackend(): void {
+    console.log('⏰ Despertando backend...');
+    
+    const startTime = Date.now();
+
+    // ESTRATEGIA: Wake-up agresivo para Render.com
+    this.apiWakeUpService.aggressiveWakeUp().subscribe({
+      next: (success) => {
+        const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+        
+        if (success) {
+          console.log(`✅ Backend despierto en ${elapsedTime}s`);
+          this.isBackendAwake = true;
+          
+          // Ocultar overlay después de una breve transición
+          setTimeout(() => {
+            this.showLoadingOverlay = false;
+          }, 300);
+        } else {
+          console.warn(`⚠️ Wake-up completado con advertencias (${elapsedTime}s)`);
+          this.isBackendAwake = true;
+          this.showLoadingOverlay = false;
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error en wake-up:', error);
+        // Aún así, permitir que la app continúe
+        this.isBackendAwake = false;
+        this.showLoadingOverlay = false;
+      }
+    });
+
+    // Timeout de seguridad: ocultar overlay después de 30s
+    setTimeout(() => {
+      if (this.showLoadingOverlay) {
+        console.warn('⏱️ Timeout de wake-up alcanzado, continuando...');
+        this.showLoadingOverlay = false;
+      }
+    }, 30000);
+  }
+
   onLoginPopupClose(): void {
     console.log('❌ Cerrando popup de login');
     this.showLoginPopup = false;
     this.loginPopupService.close();
   }
 
-  /**
-   * Login exitoso
-   */
   onLoginSuccess(returnUrl: string): void {
     console.log('✅ Login exitoso, navegando a:', returnUrl);
     this.showLoginPopup = false;
@@ -70,9 +113,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  /**
-   * Cambiar de login a registro
-   */
   onSwitchToRegister(): void {
     console.log('🔄 Cambiando de login a registro');
     this.showLoginPopup = false;
@@ -81,30 +121,20 @@ export class AppComponent implements OnInit {
     }, 200);
   }
 
-  /**
-   * Cerrar popup de registro
-   */
   onCloseRegistroPopup(): void {
     console.log('❌ Cerrando popup de registro');
     this.showRegistroPopup = false;
   }
 
-  /**
-   * Registro exitoso
-   */
   onRegistroSuccess(): void {
     console.log('✅ Registro exitoso');
     this.showRegistroPopup = false;
     
-    // Abrir login después de un pequeño delay
     setTimeout(() => {
       this.showLoginPopup = true;
     }, 500);
   }
 
-  /**
-   * Cambiar de registro a login
-   */
   onSwitchToLogin(): void {
     console.log('🔄 Cambiando de registro a login');
     this.showRegistroPopup = false;

@@ -1,7 +1,8 @@
-// src/app/app.module.ts - CON KEEP-ALIVE SERVICE
+// src/app/app.module.ts - VERSIÓN CORREGIDA
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common'; // ✅ AÑADIDO
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -37,36 +38,53 @@ import { PasswordConfirmModalComponent } from './components/password-confirm-mod
 
 // Servicios
 import { PdfService } from './services/pdf.service';
-import { KeepAliveService } from './services/keep-alive.service'; // ✅ NUEVO
+import { ApiWakeUpService } from './services/api-wake-up.service'; // ✅ AÑADIDO
 
 @NgModule({
   declarations: [
-    ImageUrlPipe,
+    // ✅ CRÍTICO: AppComponent DEBE estar aquí
     AppComponent,
+    
+    // Pipes
+    ImageUrlPipe,
+    
+    // Componentes compartidos
     NavbarComponent,
     FooterComponent,
+    HeaderComponent,
+    BannerComponent,
+    
+    // Componentes de páginas
     HomeComponent,
+    ProfileComponent,
+    CheckoutComponent,
+    
+    // Componentes de productos
     ProductListComponent,
     ProductDetailComponent,
     ProductPopupComponent,
+    SearchResultsComponent,
+    
+    // Componentes de pedidos
+    OrderLineComponent,
+    HistorialPedidosComponent,
+    
+    // Componentes de carrito
     CartComponent,
-    CheckoutComponent,
+    
+    // Componentes de admin
     AdminComponent,
     CategoryManagerComponent,
     ProductManagerComponent,
-    SearchResultsComponent,
-    ProfileComponent,
-    OrderLineComponent,
-    BannerComponent,
-    HeaderComponent,
+    
+    // Modales y popups
     LoginPopupComponent,
     RegistroPopupComponent,
-    HistorialPedidosComponent,
     PasswordConfirmModalComponent
   ],
-  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
+    CommonModule, // ✅ AÑADIDO para *ngIf
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -76,10 +94,14 @@ import { KeepAliveService } from './services/keep-alive.service'; // ✅ NUEVO
     // Interceptors
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    
     // Servicios
     PdfService,
-    KeepAliveService, // ✅ NUEVO
+    ApiWakeUpService, // ✅ AÑADIDO
+    
+    // HttpClient
     provideHttpClient(withInterceptorsFromDi())
-  ]
+  ],
+  bootstrap: [AppComponent] // ✅ CRÍTICO: Debe estar aquí
 })
 export class AppModule { }

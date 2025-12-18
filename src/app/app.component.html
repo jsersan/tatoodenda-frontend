@@ -1,5 +1,20 @@
 <!-- app.component.html - ARCHIVO COMPLETO -->
 
+<!-- ✅ Overlay de carga mientras se despierta el backend -->
+<div class="loading-overlay" *ngIf="showLoadingOverlay">
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <h2 class="loading-title">Tatoodenda</h2>
+    <p class="loading-text">Preparando tu experiencia...</p>
+    <div class="loading-progress">
+      <div class="progress-bar"></div>
+    </div>
+    <p class="loading-hint">
+      {{ isBackendAwake ? 'Casi listo...' : 'Conectando con el servidor...' }}
+    </p>
+  </div>
+</div>
+
 <!-- Componente de encabezado que contiene el título de la tienda -->
 <app-header></app-header>
 
